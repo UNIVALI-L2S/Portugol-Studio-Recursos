@@ -1,3 +1,30 @@
+/* CLIQUE NO SINAL DE "+", À ESQUERDA, PARA EXIBIR A DESCRIÇÃO DO EXEMPLO
+ *  
+ * Copyright (C) 2016 - UNIVALI - Universidade do Vale do Itajaí
+ * 
+ * Este arquivo de código fonte é livre para utilização, cópia e/ou modificação
+ * desde que este cabeçalho, contendo os direitos autorais e a descrição do programa, 
+ * seja mantido.
+ * 
+ * Se tiver dificuldade em compreender este exemplo, acesse as vídeoaulas do Portugol 
+ * Studio para auxiliá-lo:
+ * 
+ * https://www.youtube.com/watch?v=K02TnB3IGnQ&list=PLb9yvNDCid3jQAEbNoPHtPR0SWwmRSM-t
+ * 
+ * Descrição:
+ * 
+ * 	Este exemplo é um programa que cria fases para o jogo Programe
+ * 	escrito em Portugol. O exemplo demonstra como utilizar algumas das bibliotecas 
+ * 	existentes no Portugol. Neste exemplo, também é possível ver algumas técnicas 
+ * 	utilizadas na criação de jogos.
+ * 	
+ * Autores:
+ * 
+ * 	Adson Marques da Silva Esteves(shiandson@gmail.com)
+ * 	
+ * Data: 11/03/2016
+ */
+
 programa
 {
 	inclua biblioteca Graficos --> g
@@ -10,6 +37,8 @@ programa
 	inclua biblioteca Tipos --> tp
 	inclua biblioteca Sons --> sm
 
+	//constantes que significam objetos ou botões, para facilitar o uso
+	
 	const inteiro BOTAO_SALVAR=18
 	const inteiro BOTAO_ABRIR=28
 	const inteiro BOTAO_EXCLUIR=38
@@ -38,6 +67,8 @@ programa
 	const inteiro posicao_objetos[2] = {182, 387}
 
 	const inteiro tamanho_objetos[2] = {67, 44}
+
+	//variaveis para guardar imagens
 	
 	inteiro img_mapa=0, img_objects=0, img_quadro =0, img_botao_excluir=0
 	inteiro posicao_x_mouse = 0, posicao_y_mouse=0, posicao_matx = 0, posicao_maty=0
@@ -45,12 +76,14 @@ programa
 	inteiro digitos_por_tile=8, digitos_parte=2
 
 	inteiro NUMERO_LINHAS=8, NUMERO_COLUNAS=8
-
+	//variaveis para verificar ações
 	logico pegou_objeto=falso
 	logico tem_saida=falso, tem_inicio=falso
 
 	cadeia nome_arquivo="vazio"
 
+	//variaveis dos mapas
+	
 	inteiro mapa[8][8]={{0, 0, 0, 0, 0, 0, 0, 0}, 
 				  	{0, 0, 0, 0, 0, 0, 0, 0}, 
 				  	{0, 0, 0, 0, 0, 0, 0, 0},
@@ -95,6 +128,7 @@ programa
 	
 	funcao criador()
 	{
+		//funcao que roda o programa
 		faca
 		{			
 			verifica_botoes()
@@ -105,6 +139,7 @@ programa
 
 	funcao verifica_botoes()
 	{
+		//verifica se algum botão foi clicado	
 		se(mouse_esta_sobre_objeto(posicao_quadro[0]+466, posicao_quadro[1], 39, 47))
 		{
 			
@@ -149,6 +184,7 @@ programa
 
 	funcao salvar_arquivo()
 	{
+		//função para salvar o arquivo do mapa atual
 		cadeia formatos[] =
 		{
 			"Arquivos de Level|lvl"
@@ -160,7 +196,9 @@ programa
 	}
 
 	funcao escrever_nivel(cadeia nome_arquivo)
-	{		
+	{	
+		//função escreve os dados do mapa no arquivo
+		//eles são transformados em pequenos dados hexadecimais e unidos no arquivo 	
 		inteiro arquivo, linha = 0, coluna=0, indice = 0
 		cadeia texto_linha
 				
@@ -211,6 +249,7 @@ programa
 
 	funcao abrir_arquivo()
 	{
+		//abre um arquivo de fase no computador
 		cadeia formatos[] =
 		{
 			"Arquivos de Level|lvl"
@@ -223,7 +262,9 @@ programa
 	}
 	
 	funcao carregar_nivel(cadeia nome_arquivo)
-	{		
+	{
+		//verifica o arquivo e atualiza as matrizes de acordo com o tal
+		//eles vem com hexadecimais divididos em 4 partes para cada matriz		
 		se(a.arquivo_existe(nome_arquivo))
 		{
 			inteiro arquivo, linha = 0, coluna=0
@@ -269,6 +310,7 @@ programa
 
 	funcao resetar_mapa()
 	{
+		//deleta todos os itens que estiverem no mapa
 		inteiro i, j
 		para(i=0; i<8; i++)
 		{
@@ -291,6 +333,7 @@ programa
 	
 	funcao desenhar()
 	{
+		//função que chama os desenhos
 		g.limpar()
 		g.definir_cor(0x99FF66)
 		desenhar_mapa()
@@ -301,6 +344,7 @@ programa
 
 	funcao desenhar_mapa()
 	{
+		//desenha o mapa de acordo com as matrizes
 		g.desenhar_imagem(posicao_mapa[0], posicao_mapa[1], img_mapa)
 		desenha_saida()
 		para(inteiro i=0; i<8;i++)
@@ -322,6 +366,7 @@ programa
 
 	funcao desenha_saida()
 	{
+		//a saida deve fica abaixo de qualquer objeto, por isso ela é desenhada separadamente
 		para(inteiro i=0; i<8;i++)
 		{
 			para(inteiro j=0;j<8;j++)
@@ -337,6 +382,7 @@ programa
 
 	funcao desenha_tile(inteiro s, inteiro posicao_objeto_x, inteiro posicao_objeto_y)
 	{
+		//desenha o objeto no tile, apenas objetos de 1 tile
 		escolha(s){
 			caso  20 : g.desenhar_porcao_imagem(posicao_objeto_x+posicao_mapa[0]-5, posicao_objeto_y+posicao_mapa[1]-5,  130, 0, 45, 45, img_objects) pare 
 			caso  30 : g.desenhar_porcao_imagem(posicao_objeto_x+posicao_mapa[0]-5, posicao_objeto_y+posicao_mapa[1]-5,  198, 0, 45, 45, img_objects) pare 
@@ -346,6 +392,7 @@ programa
 
 	funcao desenha_cerca(inteiro s, inteiro posicao_objeto_x, inteiro posicao_objeto_y)
 	{
+		//desenha as cercas, certas cercas precisam de 2 desenhos
 		escolha(s)
 		{			
 			caso  1 : g.desenhar_porcao_imagem(posicao_objeto_x+posicao_mapa_cerca[0], posicao_objeto_y+posicao_mapa_cerca[1], 145, 143, 85, 10, img_objects) pare			
@@ -360,6 +407,7 @@ programa
 	
 	funcao desenha_char(inteiro s, inteiro posicao_objeto_x, inteiro posicao_objeto_y)
 	{
+		//desenha o personagem, dependendo do lado que estiver virado
 		escolha(s){
 			caso  11 : g.desenhar_porcao_imagem(posicao_objeto_x+posicao_mapa[0], posicao_objeto_y+posicao_mapa[1],  402,   5, 36, 31, img_objects) pare 
 			caso  21 : g.desenhar_porcao_imagem(posicao_objeto_x+posicao_mapa[0], posicao_objeto_y+posicao_mapa[1],  402,  47, 36, 31, img_objects) pare 
@@ -370,12 +418,14 @@ programa
 	
 	funcao desenhar_quadro()
 	{
+		//desenha o quadro e seus objetos
 		g.desenhar_imagem(posicao_quadro[0], posicao_quadro[1], img_quadro)
 		g.desenhar_imagem(posicao_quadro[0], posicao_quadro[1], img_objects)
 	}
 
 	funcao desenha_objeto_no_mouse()
 	{
+		//desenha o objeto que o mouse estiver arrastando
 		acha_mouse()
 		se(objeto_clicado==ARVORE)
 		{
@@ -438,12 +488,14 @@ programa
 
 	funcao acha_mouse()
 	{
+		//atualiza a posição do mouse nas variaveis
 		posicao_x_mouse=mo.posicao_x()
 		posicao_y_mouse=mo.posicao_y()
 	}
 
 	funcao pega_objeto()
 	{
+		//pega o objeto que foi clicado e coloca no mouse até ser deixado no mapa
 		se(objeto_clicado==0 e pegou_objeto==falso)
 		{
 			objeto_clicado=objeto_selecionado()
@@ -462,6 +514,7 @@ programa
 
 	funcao poe_objeto_no_tile()
 	{
+		//coloca os obejtos presos ao mouse no mapa na posição onde estiver o mouse, o modo e o mapa que o objeto será colocado, vai depender do objeto
 		acha_mouse()
 		se(objeto_clicado>0 e objeto_clicado<4)
 		{
@@ -539,6 +592,7 @@ programa
 		
 	funcao inteiro objeto_selecionado()
 	{
+		//verifica qual dos obejtos foi clicado no quadro de objetos
 		para(inteiro i=0; i<4; i++)
 		{
 			para(inteiro j=0; j<6; j++)
@@ -554,6 +608,7 @@ programa
 	
 	funcao logico mouse_esta_sobre_objeto(inteiro posicao_x_objeto, inteiro posicao_y_objeto, inteiro tamanho_x_objeto, inteiro tamanho_y_objeto)
 	{
+		//funcao generica que verifica se o mouse está sobre o obejto a partir da posição e tamanho do tal.
 		se(posicao_x_mouse>posicao_x_objeto e posicao_x_mouse<posicao_x_objeto+tamanho_x_objeto)
 		{
 			se(posicao_y_mouse>posicao_y_objeto e posicao_y_mouse<posicao_y_objeto+tamanho_y_objeto)
@@ -566,6 +621,8 @@ programa
 
 	funcao logico objeto_foi_clicado(logico esta_no_objeto)
 	{
+		//funcao generica que verifica se um objeto foi clicado passando uma confirmação se o mouse está sobre o tal
+		//normalmente utilizada junto com o função mouse_esta_sobre_o_objeto()
 		se(esta_no_objeto e mo.botao_pressionado(mo.BOTAO_ESQUERDO))
 		{
 			retorne verdadeiro
@@ -575,6 +632,8 @@ programa
 
 	funcao carregar_imagens()
 	{
+		//carrega as imagens
+		
 		cadeia pasta_objetos = "./objetos/"
 
 		img_mapa = g.carregar_imagem(pasta_objetos + "mapa_2d.png")
@@ -585,6 +644,7 @@ programa
 	
 	funcao inicializar()
 	{
+		//inicia o modo gráfico
 		g.iniciar_modo_grafico(verdadeiro)
 		g.definir_dimensoes_janela(800, 600)
 		g.definir_titulo_janela("JogoLite")
@@ -592,6 +652,7 @@ programa
 
 	funcao inicio()
 	{
+		//função que inicia o progrma e manda para as funções necessárias
 		carregar_imagens()
 		inicializar()
 		criador()	
@@ -603,6 +664,6 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 5295; 
- * @DOBRAMENTO-CODIGO = [95, 105, 149, 211, 224, 269, 291, 301, 322, 337, 346, 360, 370, 376, 438, 444, 539, 554, 566, 575, 585, 592];
+ * @POSICAO-CURSOR = 629; 
+ * @DOBRAMENTO-CODIGO = [128, 139, 184, 197, 249, 263, 310, 333, 344, 366, 382, 392, 407, 418, 425, 488, 495, 514, 592, 608, 621, 632, 644, 652];
  */
