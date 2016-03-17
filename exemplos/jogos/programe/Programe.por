@@ -64,6 +64,7 @@ programa
 		const inteiro BOTAO_PLAY = 5
 		const inteiro BOTAO_RESET = 6
 		const inteiro BOTAO_EXCLUIR =7
+		const inteiro BOTAO_PARAR = 10
 		
 
 		//constantes de tamanho de objeto
@@ -87,7 +88,8 @@ programa
 	//variaveis de imagem
 	inteiro tela_inicial=0, selecao_boy=0, selecao_girl=0
 	inteiro imagem_charf = 0, imagem_chara = 0, imagem_char=0, imagem_exemplo=0
-	inteiro img_mapa = 0, img_objects = 0, img_quadros =0, img_quadros_adjacentes=0,  img_comandos = 0,img_comandos_menor=0, img_botoes=0, img_setas=0, img_botao_excluir=0, img_numeros=0, img_quadro_pontuacao=0, img_borda=0
+	inteiro img_mapa = 0, img_objects = 0, img_quadros =0, img_quadros_adjacentes=0,  img_comandos = 0,img_comandos_menor=0
+	inteiro img_botoes=0, img_setas=0, img_botao_excluir=0, img_numeros=0, img_quadro_pontuacao=0, img_borda=0, img_botao_parar=0, img_mouse=0
 
 	//variaveis que permitem troca de sprite do personagem para permitir animação
 	inteiro indice_imagem=0, indice_imagem_exemplo=0
@@ -128,15 +130,18 @@ programa
 
 	//variavel que contém se um comando foi pego para evitar cliques em outros objetos enquanto estiver carregando um comando
 	logico pegou_comando=falso
+	//variavel que sabe se o mouse está em cima de um objeto para mudar a cursor
+	logico em_cima_de_um_objeto=falso
 	// variavel que cotém qual objeto está sendo clicado no momento
 	inteiro objeto_clicado=0
 
 	//variavel que diz quando tem obejto bloqueando ou não para poder andar
 	logico pode_andar=falso
 
-	//variaveis de inicio do play e quando chega ao fim da fase
+	//variaveis de inicio do play, parar e quando chega ao fim da fase
 	logico comecou_a_rodar=falso
 	logico chegou_no_fim=falso
+	logico parou = falso
 
 	//contém as posições do mouse
 	inteiro posicao_x_mouse=0, posicao_y_mouse=0
@@ -345,6 +350,7 @@ programa
 		//comaça a jogar
 		faca
 		{
+			reseta_cursor()
 			pega_comando()//função que permite pegar um comando e colocar no quadro
 			desenhar()//função que desenha o que precisa na tela
 			acha_mouse()//atualiza a posição do mouse
@@ -387,6 +393,23 @@ programa
 		{
 			//Se clicou e quando desclicou o mouse ainda estava no botão RESET, retorna verdadeiro, ou seja clicou verdadeiramente
 			pontos_limpou++
+			objeto_clicado=0
+			retorne verdadeiro
+		}
+		retorne falso
+	}
+
+	funcao logico deu_parar()
+	{
+		//Verifica o clique no botão PARAR
+		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_botoes[1], posicao_botoes[2], tam_botoes[0], tam_botoes[1])) e pegou_comando==falso)
+		{
+			objeto_clicado=BOTAO_PARAR
+			retorne falso
+		}
+		se((objeto_clicado==BOTAO_PARAR e mouse_esta_sobre_objeto(posicao_botoes[1], posicao_botoes[2], tam_botoes[0], tam_botoes[1])) e objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_botoes[1], posicao_botoes[2], tam_botoes[0], tam_botoes[1]))==falso)
+		{
+			//Se clicou e quando desclicou o mouse ainda estava no botão PARAR, retorna verdadeiro, ou seja clicou verdadeiramente
 			objeto_clicado=0
 			retorne verdadeiro
 		}
@@ -558,12 +581,13 @@ programa
 		
 	funcao rodar_caminho()
 	{
-		//movimenta o persoangem de acordo com os comandos no quadro
+		//movimenta o persoangem de acordo com os comandos no quadros
 		posicao_inicial()//coloca na posição inicial
 		comecou_a_rodar=verdadeiro//define que o personagem está se movimentando
 		acha_char()//atualiza as variaveis com a posição do personagem
 		faca
 		{
+			reseta_cursor()
 			se(nao eh_um_loop())//se o comando atual não for um inicio ou fim de loop
 			{
 			
@@ -589,11 +613,20 @@ programa
 						acha_char()//atualiza a posição do personagem
 					}
 					desenhar()//redesenha a tela
+					parou=deu_parar()
+					se(parou)
+					{
+						pare
+					}
 				}			
 			}
 			acha_mouse()//atualiza posição do mouse
-			
+			se(parou)
+			{
+				pare
+			}
 		}enquanto(nao terminou_rodar_comandos())//continuará a andar enquanto nao chegar ao fim do quadrod e comandos
+		parou=falso
 		indice_imagem=0
 		//se chegou ao fim não precisa mais andar
 		comecou_a_rodar=falso
@@ -610,6 +643,12 @@ programa
 		posicao_y_mouse=mo.posicao_y()
 	}
 
+	funcao reseta_cursor()
+	{
+		//permite que a reverificação "se o mouse está sobre objeto" de cada um dos objetos possa mudar o cursor caso seja falso
+		em_cima_de_um_objeto=falso
+	}
+	
 	funcao logico eh_um_loop()
 	{
 		se(mat_pos_quadro_programavel[pos_quadro_y][pos_quadro_x]==COMANDO_LOOP_inicio)
@@ -754,7 +793,25 @@ programa
 			desenha_botoes()
 			desenha_comando_no_mouse()
 			desenha_pontuacao()
+			desenha_mouse()
 			g.renderizar()
+	}
+
+	funcao desenha_mouse()
+	{
+		acha_mouse()
+		se(pegou_comando)
+		{
+			g.desenhar_porcao_imagem(posicao_x_mouse-3, posicao_y_mouse-5, 33, 0, 17, 25, img_mouse)
+		}
+		senao se(em_cima_de_um_objeto)
+		{
+			g.desenhar_porcao_imagem(posicao_x_mouse-3, posicao_y_mouse-5, 16, 0, 17, 25, img_mouse)
+		}
+		senao
+		{
+			g.desenhar_porcao_imagem(posicao_x_mouse-3, posicao_y_mouse-5, 0, 0, 17, 25, img_mouse)
+		}
 	}
 	
 	funcao desenha_mapa()
@@ -999,7 +1056,14 @@ programa
 	{
 		//desenha os botoes play e excluir
 		g.desenhar_porcao_imagem(posicao_botoes[0], posicao_botoes[2], 34, 0, tam_botoes[0], tam_botoes[1], img_botoes)
-		g.desenhar_porcao_imagem(posicao_botoes[1], posicao_botoes[2], 0, 0, tam_botoes[0], tam_botoes[1], img_botoes)
+		se(comecou_a_rodar)
+		{
+			g.desenhar_imagem(posicao_botoes[1], posicao_botoes[2], img_botao_parar)
+		}
+		senao
+		{
+			g.desenhar_porcao_imagem(posicao_botoes[1]+5, posicao_botoes[2], 0, 0, tam_botoes[0], tam_botoes[1], img_botoes)	
+		}
 	}
 
 	funcao desenha_pontuacao()
@@ -1208,6 +1272,7 @@ programa
 		{
 			se(posicao_y_mouse>posicao_y_objeto e posicao_y_mouse<posicao_y_objeto+tamanho_y_objeto)
 			{
+				em_cima_de_um_objeto=verdadeiro
 				retorne verdadeiro
 			}
 		}
@@ -1511,13 +1576,14 @@ programa
 		//E retorna o personagem selecionado
 		inteiro char_selecionado=0
 		cadeia pasta_selecao="./selecao_personagem/"
-		
+		mo.ocultar_cursor()
 		tela_inicial=g.carregar_imagem(pasta_selecao + "tela.png")
 		selecao_boy=g.carregar_imagem(pasta_selecao + "personagem_boy_selecao.png")
 		selecao_girl=g.carregar_imagem(pasta_selecao + "personagem_girl_selecao.png")
 
 		enquanto(char_selecionado==0)
 		{
+			reseta_cursor()
 			g.desenhar_imagem(0, 0, tela_inicial)
 			se(mouse_esta_sobre_objeto(14.0, 135.0, 395.0, 465.0))
 			{
@@ -1545,6 +1611,7 @@ programa
 					retorne GIRL
 				}
 			}
+			desenha_mouse()
 			g.renderizar()
 		}
 	}
@@ -1580,10 +1647,12 @@ programa
 		img_comandos_menor = g.carregar_imagem(pasta_objetos +"comandos_menor.png")
 		img_botoes = g.carregar_imagem(pasta_objetos + "botoes.png")
 		img_botao_excluir = g.carregar_imagem(pasta_objetos + "botao_excluir.png")
+		img_botao_parar = g.carregar_imagem(pasta_objetos + "botao_parar.png")
 		img_setas = g.carregar_imagem(pasta_objetos + "setas.png")
 		img_numeros = g.carregar_imagem(pasta_objetos + "numeros.png")
 		img_quadro_pontuacao = g.carregar_imagem(pasta_objetos + "quadro_pontuacao.png")
 		img_borda=g.carregar_imagem(pasta_objetos + "comando_ativado_borda.png")
+		img_mouse=g.carregar_imagem(pasta_objetos + "mouse.png")
 	}
 
 	funcao inicializar()
@@ -1604,13 +1673,14 @@ programa
 		telainicial()	
 	}
 }
+
 /* $$$ Portugol Studio $$$ 
  * 
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 929; 
- * @DOBRAMENTO-CODIGO = [162, 171, 180, 191, 200, 223, 227, 232, 247, 268, 280, 329, 342, 359, 377, 395, 414, 445, 535, 558, 605, 612, 654, 681, 711, 741, 759, 791, 814, 824, 851, 859, 874, 899, 951, 957, 983, 997, 1004, 1019, 1053, 1075, 1098, 1126, 1140, 1171, 1202, 1216, 1227, 1235, 1284, 1309, 1316, 1323, 1331, 1345, 1356, 1363, 1387, 1452, 1465, 1482, 1490, 1499, 1507, 1551, 1570, 1588, 1596];
+ * @POSICAO-CURSOR = 26590; 
+ * @DOBRAMENTO-CODIGO = [0, 167, 176, 185, 196, 205, 228, 232, 237, 252, 273, 285, 334, 347, 365, 383, 401, 418, 437, 468, 558, 581, 638, 645, 651, 693, 720, 750, 780, 816, 848, 871, 881, 908, 916, 931, 956, 1008, 1014, 1040, 1054, 1068, 1083, 1117, 1139, 1162, 1190, 1204, 1235, 1266, 1281, 1292, 1300, 1349, 1374, 1381, 1388, 1396, 1410, 1421, 1428, 1452, 1517, 1530, 1547, 1555, 1564, 1572, 1618, 1637, 1657, 1665];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  */
