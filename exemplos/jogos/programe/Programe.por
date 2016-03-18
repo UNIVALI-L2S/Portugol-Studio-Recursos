@@ -86,10 +86,10 @@ programa
 		const real posicao_setas[3]={539.0, 390.0, 436.0}
 
 	//variaveis de imagem
-	inteiro tela_inicial=0, selecao_boy=0, selecao_girl=0
+	inteiro tela_inicial=0, selecao_boy=0, selecao_girl=0, img_ajuda=0
 	inteiro imagem_charf = 0, imagem_chara = 0, imagem_char=0, imagem_exemplo=0
 	inteiro img_mapa = 0, img_objects = 0, img_quadros =0, img_quadros_adjacentes=0,  img_comandos = 0,img_comandos_menor=0
-	inteiro img_botoes=0, img_setas=0, img_botao_excluir=0, img_numeros=0, img_quadro_pontuacao=0, img_borda=0, img_botao_parar=0, img_mouse=0
+	inteiro img_botoes=0, img_setas=0, img_botao_excluir=0, img_numeros=0, img_quadro_pontuacao=0, img_borda=0, img_botao_parar=0, img_mouse=0, img_carregando=0, img_pronto=0
 
 	//variaveis que permitem troca de sprite do personagem para permitir animação
 	inteiro indice_imagem=0, indice_imagem_exemplo=0
@@ -350,10 +350,10 @@ programa
 		//comaça a jogar
 		faca
 		{
-			reseta_cursor()
 			pega_comando()//função que permite pegar um comando e colocar no quadro
 			desenhar()//função que desenha o que precisa na tela
 			acha_mouse()//atualiza a posição do mouse
+			reseta_cursor()
 			se(deu_reset())
 			{
 				resetar()// se o objeto da lixeira for clicado o quadro de comandos é limpado
@@ -802,15 +802,15 @@ programa
 		acha_mouse()
 		se(pegou_comando)
 		{
-			g.desenhar_porcao_imagem(posicao_x_mouse-3, posicao_y_mouse-5, 33, 0, 17, 25, img_mouse)
+			g.desenhar_porcao_imagem(posicao_x_mouse, posicao_y_mouse, 50, 0, 22, 28, img_mouse)
 		}
 		senao se(em_cima_de_um_objeto)
 		{
-			g.desenhar_porcao_imagem(posicao_x_mouse-3, posicao_y_mouse-5, 16, 0, 17, 25, img_mouse)
+			g.desenhar_porcao_imagem(posicao_x_mouse-11, posicao_y_mouse, 24, 0, 25, 28, img_mouse)
 		}
 		senao
 		{
-			g.desenhar_porcao_imagem(posicao_x_mouse-3, posicao_y_mouse-5, 0, 0, 17, 25, img_mouse)
+			g.desenhar_porcao_imagem(posicao_x_mouse, posicao_y_mouse, 0, 0, 25, 28, img_mouse)
 		}
 	}
 	
@@ -992,14 +992,15 @@ programa
 			caso  DESCE 	: g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 0*tam_comandos[0], 1*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare 
 			caso  SOBE 	: g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 1*tam_comandos[0], 0*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare 
 			caso  DIREITA 	: g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 1*tam_comandos[0], 1*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare
-			caso COMANDO_LOOP_inicio : g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 0*tam_comandos[0], 2*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare
+			caso  COMANDO_LOOP_inicio : g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 0*tam_comandos[0], 2*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare
 		}
 		//verificam se os botões excluir e numero de loops foram clicados e modifica quadro
 		se(comecou_a_rodar==falso)
 		{
-		verifica_botao_excluir(i, j, fator_saiu_por_cima, fator_saiu_do_quadro)			
+			verifica_botao_excluir(i, j, fator_saiu_por_cima, fator_saiu_do_quadro)			
 		}
 		verifica_botoes_numero_loop(i, j, fator_saiu_por_cima, fator_saiu_do_quadro)
+		//desenha a borda do comando atual sendo executado
 		se(j==pos_quadro_x e i==pos_quadro_y e comecou_a_rodar==verdadeiro)
 		{
 			g.desenhar_porcao_imagem(posicao_quadro[0]+(pos_quadro_x*tam_comandos[0]), posicao_quadro[1]+(pos_quadro_y*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 0, 0-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_borda)	
@@ -1164,25 +1165,28 @@ programa
 	{
 		//verifica se o x do comando foi clicado e assim tenta exclui-lo do local, se um loop, ele também levará o começo do loop
 		//porém não será retirado os comandos dentro do loop
-		se((mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro) e mat_pos_quadro_programavel[i][j]!=0)  e pegou_comando==falso)
+		se(mat_pos_quadro_programavel[i][j]!=0)
 		{
-			g.desenhar_imagem(posicao_quadro[0]+(j*tam_comandos[0])+tam_comandos[0]-17, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, img_botao_excluir)
-			se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+tam_comandos[0]-17, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima,17.0, 17.0)))
+			se((mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro) e mat_pos_quadro_programavel[i][j]!=0)  e pegou_comando==falso)
 			{
-				objeto_clicado=BOTAO_EXCLUIR
-			}
-			se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+tam_comandos[0]-17, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima,17.0, 17.0))==falso e objeto_clicado==BOTAO_EXCLUIR)
-			{
-				pontos_instrucoes--
-				pontos_deletados++
-				objeto_clicado=0
-				se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_inicio ou mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_fim)
+				g.desenhar_imagem(posicao_quadro[0]+(j*tam_comandos[0])+tam_comandos[0]-17, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, img_botao_excluir)
+				se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+tam_comandos[0]-17, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima,17.0, 17.0)))
 				{
-					retirar_loop(i, j, mat_pos_quadro_programavel[i][j]%10)
+					objeto_clicado=BOTAO_EXCLUIR
 				}
-				senao
+				se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+tam_comandos[0]-17, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima,17.0, 17.0))==falso e objeto_clicado==BOTAO_EXCLUIR)
 				{
-					retirar_comando(i, j)	
+					pontos_instrucoes--
+					pontos_deletados++
+					objeto_clicado=0
+					se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_inicio ou mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_fim)
+					{
+						retirar_loop(i, j, mat_pos_quadro_programavel[i][j]%10)
+					}
+					senao
+					{
+						retirar_comando(i, j)	
+					}
 				}
 			}
 		}
@@ -1580,6 +1584,7 @@ programa
 		tela_inicial=g.carregar_imagem(pasta_selecao + "tela.png")
 		selecao_boy=g.carregar_imagem(pasta_selecao + "personagem_boy_selecao.png")
 		selecao_girl=g.carregar_imagem(pasta_selecao + "personagem_girl_selecao.png")
+		img_ajuda=g.carregar_imagem(pasta_selecao + "tela_ajuda.png")
 
 		enquanto(char_selecionado==0)
 		{
@@ -1618,7 +1623,11 @@ programa
 
 	funcao carregar_personagem(inteiro char)
 	{
-		//carrega as imagens do persoangem selecionado
+		//vai para tela de tutorial e carrega as imagens do persoangem selecionado
+		g.limpar()
+		g.desenhar_imagem(0, 0, img_ajuda)
+		g.desenhar_imagem(286, 526, img_carregando)
+		g.renderizar()
 		cadeia pasta
 		se(char==1)
 		{
@@ -1632,6 +1641,16 @@ programa
 		imagem_chara = g.carregar_imagem(pasta + "char_a.png")
 		imagem_char = g.carregar_imagem(pasta + "chars.png")
 		imagem_exemplo = g.carregar_imagem(pasta + "chars.png")
+		
+		enquanto(objeto_foi_clicado(mouse_esta_sobre_objeto(286, 526, 230, 50))==falso)
+		{			
+			g.limpar()			
+			g.desenhar_imagem(0, 0, img_ajuda)
+			g.desenhar_imagem(286, 526, img_pronto)
+			desenha_mouse()
+			g.renderizar()
+			reseta_cursor()
+		}
 		
 	}
 	
@@ -1653,6 +1672,8 @@ programa
 		img_quadro_pontuacao = g.carregar_imagem(pasta_objetos + "quadro_pontuacao.png")
 		img_borda=g.carregar_imagem(pasta_objetos + "comando_ativado_borda.png")
 		img_mouse=g.carregar_imagem(pasta_objetos + "mouse.png")
+		img_carregando= g.carregar_imagem(pasta_objetos + "botao_carregando.png")
+		img_pronto= g.carregar_imagem(pasta_objetos + "botao_pronto.png")
 	}
 
 	funcao inicializar()
@@ -1679,8 +1700,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 26590; 
- * @DOBRAMENTO-CODIGO = [0, 167, 176, 185, 196, 205, 228, 232, 237, 252, 273, 285, 334, 347, 365, 383, 401, 418, 437, 468, 558, 581, 638, 645, 651, 693, 720, 750, 780, 816, 848, 871, 881, 908, 916, 931, 956, 1008, 1014, 1040, 1054, 1068, 1083, 1117, 1139, 1162, 1190, 1204, 1235, 1266, 1281, 1292, 1300, 1349, 1374, 1381, 1388, 1396, 1410, 1421, 1428, 1452, 1517, 1530, 1547, 1555, 1564, 1572, 1618, 1637, 1657, 1665];
+ * @POSICAO-CURSOR = 58285; 
+ * @DOBRAMENTO-CODIGO = [0, 167, 176, 185, 196, 205, 228, 232, 237, 252, 273, 285, 334, 347, 365, 383, 401, 418, 437, 468, 558, 581, 638, 645, 651, 693, 720, 750, 780, 799, 816, 848, 871, 881, 908, 916, 931, 956, 1009, 1015, 1041, 1055, 1069, 1084, 1118, 1140, 1163, 1194, 1208, 1239, 1270, 1285, 1296, 1304, 1353, 1378, 1385, 1392, 1400, 1414, 1425, 1432, 1456, 1521, 1534, 1551, 1559, 1568, 1656, 1678, 1686];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  */
