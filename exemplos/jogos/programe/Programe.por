@@ -143,6 +143,10 @@ programa
 	logico chegou_no_fim=falso
 	logico parou = falso
 
+	//verificam o tempo para realizar o duplo clique
+	inteiro click_timing=0
+	logico clicou=falso
+
 	//contém as posições do mouse
 	inteiro posicao_x_mouse=0, posicao_y_mouse=0
 
@@ -419,9 +423,14 @@ programa
 	funcao pega_comando()
 	{
 		//Verifica se um comando foi pego pelo mouse
-		se(mouse_esta_sobre_comandos() e pegou_comando==falso)
+		se(mouse_esta_sobre_comandos() e nao pegou_comando e nao clicou)
 		{
 			objeto_clicado=comando_que_foi_clicado()
+			se(objeto_clicado!=0)
+			{
+				clicou=verdadeiro
+				click_timing=u.tempo_decorrido()
+			}
 		}
 		se(um_comando_esta_selecionado() e (objeto_foi_clicado(pegou_comando)==falso))
 		{
@@ -432,7 +441,21 @@ programa
 			}
 			pegou_comando=falso
 			objeto_clicado=0
-		}	
+		}
+		se(mouse_esta_sobre_comandos() e (nao pegou_comando) e clicou e (u.tempo_decorrido()-click_timing<500))
+		{
+			objeto_clicado=comando_que_foi_clicado()
+			se(objeto_clicado!=0)
+			{				
+				coloca_comando_no_quadro()
+				clicou=falso
+				click_timing=1000
+			}
+		}
+		se(u.tempo_decorrido()-click_timing>=500)
+		{
+			clicou=falso
+		}
 	}
 
 	funcao logico um_comando_esta_selecionado()
@@ -548,7 +571,7 @@ programa
 						mat_pos_quadro_programavel[i][j+1]=COMANDO_LOOP_fim
 						pontos_loops++
 						retorne
-					}
+					}			
 					mat_pos_quadro_programavel[i][j]=objeto_clicado
 					retorne
 				}
@@ -1700,8 +1723,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 58285; 
- * @DOBRAMENTO-CODIGO = [0, 167, 176, 185, 196, 205, 228, 232, 237, 252, 273, 285, 334, 347, 365, 383, 401, 418, 437, 468, 558, 581, 638, 645, 651, 693, 720, 750, 780, 799, 816, 848, 871, 881, 908, 916, 931, 956, 1009, 1015, 1041, 1055, 1069, 1084, 1118, 1140, 1163, 1194, 1208, 1239, 1270, 1285, 1296, 1304, 1353, 1378, 1385, 1392, 1400, 1414, 1425, 1432, 1456, 1521, 1534, 1551, 1559, 1568, 1656, 1678, 1686];
+ * @POSICAO-CURSOR = 16501; 
+ * @DOBRAMENTO-CODIGO = [0, 171, 180, 189, 200, 209, 232, 236, 241, 256, 277, 289, 338, 351, 369, 387, 405, 460, 491, 581, 604, 661, 668, 674, 716, 743, 773, 803, 822, 839, 871, 894, 904, 931, 939, 954, 979, 1032, 1038, 1064, 1078, 1092, 1107, 1141, 1163, 1186, 1217, 1231, 1262, 1293, 1308, 1319, 1327, 1376, 1401, 1408, 1415, 1423, 1437, 1448, 1455, 1479, 1544, 1557, 1574, 1582, 1591, 1599, 1646, 1679, 1701, 1709];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  */
