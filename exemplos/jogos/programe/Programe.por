@@ -823,18 +823,22 @@ programa
 	funcao desenha_mouse()
 	{
 		acha_mouse()
-		se(pegou_comando)
+		se((posicao_x_mouse>0 e posicao_y_mouse>0) e (posicao_x_mouse<800 e posicao_y_mouse<600))
 		{
-			g.desenhar_porcao_imagem(posicao_x_mouse, posicao_y_mouse, 50, 0, 22, 28, img_mouse)
+			se(pegou_comando)
+			{
+				g.desenhar_porcao_imagem(posicao_x_mouse, posicao_y_mouse, 50, 0, 22, 28, img_mouse)
+			}
+			senao se(em_cima_de_um_objeto)
+			{
+				g.desenhar_porcao_imagem(posicao_x_mouse-11, posicao_y_mouse, 24, 0, 25, 28, img_mouse)
+			}
+			senao
+			{
+				g.desenhar_porcao_imagem(posicao_x_mouse, posicao_y_mouse, 0, 0, 25, 28, img_mouse)
+			}
 		}
-		senao se(em_cima_de_um_objeto)
-		{
-			g.desenhar_porcao_imagem(posicao_x_mouse-11, posicao_y_mouse, 24, 0, 25, 28, img_mouse)
-		}
-		senao
-		{
-			g.desenhar_porcao_imagem(posicao_x_mouse, posicao_y_mouse, 0, 0, 25, 28, img_mouse)
-		}
+		
 	}
 	
 	funcao desenha_mapa()
@@ -1143,22 +1147,25 @@ programa
 	{
 		//define quanto os comandos irão se mexer e quanto o quadro também irá.
 		//se está no limite do inicio ou do fim do quadro, ambos não poderão se mover
-		se(fator_mexer_matriz_comandos<0 )
+		se(nao pegou_comando)
 		{
-			se(esta_clicando_na_seta()==SOBE)
+			se(fator_mexer_matriz_comandos<0 )
 			{
-				fator_mexer_quadro-=2
-				fator_mexer_matriz_comandos+=2
+				se(esta_clicando_na_seta()==SOBE)
+				{
+					fator_mexer_quadro-=2
+					fator_mexer_matriz_comandos+=2
+				}
 			}
-		}
-		se((21*(tam_comandos[1])+fator_mexer_matriz_comandos)>tam_quadro_programavel[1]-tam_comandos[1])
-		{
-			se(esta_clicando_na_seta()==DESCE)
+			se((21*(tam_comandos[1])+fator_mexer_matriz_comandos)>tam_quadro_programavel[1]-tam_comandos[1])
 			{
-				fator_mexer_quadro+=2
-				fator_mexer_matriz_comandos-=2
+				se(esta_clicando_na_seta()==DESCE)
+				{
+					fator_mexer_quadro+=2
+					fator_mexer_matriz_comandos-=2
+				}
 			}
-		}
+		}	
 	}
 
 	funcao verifica_botoes_numero_loop(inteiro i, inteiro j, real fator_saiu_por_cima, real fator_saiu_do_quadro)
@@ -1723,8 +1730,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 16501; 
- * @DOBRAMENTO-CODIGO = [0, 171, 180, 189, 200, 209, 232, 236, 241, 256, 277, 289, 338, 351, 369, 387, 405, 460, 491, 581, 604, 661, 668, 674, 716, 743, 773, 803, 822, 839, 871, 894, 904, 931, 939, 954, 979, 1032, 1038, 1064, 1078, 1092, 1107, 1141, 1163, 1186, 1217, 1231, 1262, 1293, 1308, 1319, 1327, 1376, 1401, 1408, 1415, 1423, 1437, 1448, 1455, 1479, 1544, 1557, 1574, 1582, 1591, 1599, 1646, 1679, 1701, 1709];
+ * @POSICAO-CURSOR = 26897; 
+ * @DOBRAMENTO-CODIGO = [0, 171, 180, 189, 200, 209, 232, 236, 241, 256, 277, 289, 338, 351, 369, 387, 405, 422, 460, 491, 581, 604, 661, 668, 674, 716, 743, 773, 803, 843, 875, 898, 908, 935, 943, 958, 983, 1036, 1042, 1068, 1082, 1096, 1111, 1145, 1170, 1193, 1224, 1238, 1269, 1300, 1315, 1326, 1334, 1383, 1408, 1415, 1422, 1430, 1444, 1455, 1462, 1486, 1551, 1564, 1581, 1589, 1598, 1606, 1653, 1686, 1708, 1716];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  */
