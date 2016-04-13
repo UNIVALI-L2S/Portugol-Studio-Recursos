@@ -86,8 +86,8 @@ programa
 		const real posicao_setas[3]={539.0, 390.0, 436.0}
 
 	//variaveis de imagem
-	inteiro tela_inicial=0, selecao_boy=0, selecao_girl=0, img_ajuda=0
-	inteiro imagem_charf = 0, imagem_chara = 0, imagem_char=0, imagem_exemplo=0
+	inteiro selecao_boy=0, selecao_girl=0, img_ajuda=0, img_fundo=0
+	inteiro img_boy=0, img_girl=0, imagem_charf = 0, imagem_chara = 0, imagem_chars=0, imagem_char=0, imagem_exemplo=0, img_venceu=0
 	inteiro img_mapa = 0, img_objects = 0, img_quadros =0, img_quadros_adjacentes=0,  img_comandos = 0,img_comandos_menor=0
 	inteiro img_botoes=0, img_setas=0, img_botao_excluir=0, img_numeros=0, img_quadro_pontuacao=0, img_borda=0, img_botao_parar=0, img_mouse=0, img_carregando=0, img_pronto=0
 
@@ -161,6 +161,7 @@ programa
 
 	//variavel do nível atual
 	inteiro nivel=1
+	logico acabou_fases=falso
 
 	//posições dos diferentes sprites na sprite sheet
 	inteiro sprite[4][10]={	{32,  80, 62,  80, 91,  80, 123,  80, 154,  80},
@@ -245,6 +246,10 @@ programa
 		tempo_inicial=u.tempo_decorrido()//seta um novo tempo
 		limpar_campo()//limpa mapas
 		abrir_novo_nivel()//abre o nivel a entrar
+		se(acabou_fases)//verifica se terminou todas as fases e manda para a tela final
+		{
+			tela_final()
+		}					
 		definir_posicao_original()//grava a posição original do personagem para futuras checagens
 		posicao_inicial()//coloca o personagem em sua posição original
 		faca
@@ -333,6 +338,10 @@ programa
 			//e coloca para cada lugar no seu respectivo mapa
 
 			a.fechar_arquivo(arquivo)
+		}
+		senao
+		{
+			acabou_fases=verdadeiro
 		}
 	}
 	
@@ -945,7 +954,7 @@ programa
 	{
 		//desenha o char a partir do mapa de posições dos sprites do char declarado no começo, com isso, posições e direção, pode-se trocar as variaveis da posição
 		//da imagem do char na folha de sprites de acordo com a direção que estiver o char atualmente
-		g.desenhar_porcao_imagem(char_isometrico_x+posicao_mapa_char[0]+55, char_isometrico_y+posicao_mapa_char[1]+115, sprite[direcao][indice_imagem*2],sprite[direcao][indice_imagem*2+1] , -32, -80, imagem_char)
+		g.desenhar_porcao_imagem(char_isometrico_x+posicao_mapa_char[0]+55, char_isometrico_y+posicao_mapa_char[1]+115, sprite[direcao][indice_imagem*2],sprite[direcao][indice_imagem*2+1] , -32, -80, imagem_chars)
 		se(comecou_a_rodar)
 		{	
 			se(imagemporturnos%5==0)
@@ -1603,6 +1612,22 @@ programa
 		limpar_caminho_matriz()
 		iniciar_jogo()
 	}
+	
+	funcao tela_venceu()
+	{
+		g.desenhar_imagem(0, 0, img_fundo)
+		g.desenhar_imagem(114, 135, imagem_char)
+	}
+
+	funcao tela_placar()
+	{
+	}
+
+	funcao tela_final()
+	{
+		tela_venceu()
+		tela_placar()
+	}
 
 	funcao inteiro selecao_de_personagem()
 	{
@@ -1611,7 +1636,9 @@ programa
 		inteiro char_selecionado=0
 		cadeia pasta_selecao="./selecao_personagem/"
 		mo.ocultar_cursor()
-		tela_inicial=g.carregar_imagem(pasta_selecao + "tela.png")
+		img_fundo=g.carregar_imagem(pasta_selecao + "tela_fundo.png")
+		img_boy= g.carregar_imagem(pasta_selecao + "personagem_boy.png")
+		img_girl= g.carregar_imagem(pasta_selecao + "personagem_girl.png")
 		selecao_boy=g.carregar_imagem(pasta_selecao + "personagem_boy_selecao.png")
 		selecao_girl=g.carregar_imagem(pasta_selecao + "personagem_girl_selecao.png")
 		img_ajuda=g.carregar_imagem(pasta_selecao + "tela_ajuda.png")
@@ -1619,7 +1646,9 @@ programa
 		enquanto(char_selecionado==0)
 		{
 			reseta_cursor()
-			g.desenhar_imagem(0, 0, tela_inicial)
+			g.desenhar_imagem(0, 0, img_fundo)
+			g.desenhar_imagem(14, 135, img_boy)
+			g.desenhar_imagem(487, 150, img_girl)
 			se(mouse_esta_sobre_objeto(14.0, 135.0, 395.0, 465.0))
 			{
 				g.desenhar_imagem(14, 135, selecao_boy)
@@ -1670,7 +1699,8 @@ programa
 		}
 		imagem_charf = g.carregar_imagem(pasta + "char_f.png")
 		imagem_chara = g.carregar_imagem(pasta + "char_a.png")
-		imagem_char = g.carregar_imagem(pasta + "chars.png")
+		imagem_chars = g.carregar_imagem(pasta + "chars.png")
+		imagem_char = g.carregar_imagem(pasta + "personagem.png")
 		imagem_exemplo = g.carregar_imagem(pasta + "chars.png")
 		
 		enquanto(objeto_foi_clicado(mouse_esta_sobre_objeto(286, 526, 230, 50))==falso)
@@ -1731,8 +1761,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 59842; 
- * @DOBRAMENTO-CODIGO = [0, 171, 180, 189, 200, 209, 232, 236, 241, 256, 277, 289, 338, 351, 369, 387, 405, 422, 460, 491, 581, 604, 661, 668, 674, 716, 743, 773, 803, 822, 843, 875, 898, 908, 935, 943, 958, 983, 1036, 1042, 1068, 1082, 1096, 1111, 1145, 1170, 1193, 1224, 1238, 1269, 1300, 1315, 1326, 1334, 1383, 1408, 1415, 1422, 1430, 1444, 1455, 1462, 1486, 1551, 1564, 1581, 1589, 1598, 1654, 1687, 1709, 1717];
+ * @POSICAO-CURSOR = 6405; 
+ * @DOBRAMENTO-CODIGO = [0, 172, 181, 190, 201, 210, 233, 237, 242, 261, 282, 294, 347, 360, 378, 396, 414, 431, 469, 500, 590, 613, 670, 677, 683, 725, 752, 782, 812, 831, 852, 884, 907, 917, 944, 952, 967, 992, 1045, 1051, 1077, 1091, 1105, 1120, 1154, 1179, 1202, 1233, 1247, 1278, 1309, 1324, 1335, 1343, 1392, 1417, 1424, 1431, 1439, 1453, 1464, 1471, 1495, 1560, 1573, 1590, 1598, 1607, 1615, 1621, 1625, 1631, 1683, 1717, 1739, 1747];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = ;
+ * @SIMBOLOS-INSPECIONADOS = {acabou_fases, 164, 8, 12};
  */
