@@ -89,7 +89,7 @@ programa
 	inteiro selecao_boy=0, selecao_girl=0, img_ajuda=0, img_fundo=0
 	inteiro img_boy=0, img_girl=0, imagem_charf = 0, imagem_chara = 0, imagem_chars=0, imagem_char=0, imagem_exemplo=0, img_venceu=0
 	inteiro img_mapa = 0, img_objects = 0, img_quadros =0, img_quadros_adjacentes=0,  img_comandos = 0,img_comandos_menor=0
-	inteiro img_botoes=0, img_setas=0, img_botao_excluir=0, img_numeros=0, img_quadro_pontuacao=0, img_borda=0, img_botao_parar=0, img_mouse=0, img_carregando=0, img_pronto=0
+	inteiro img_botoes=0, img_setas=0, img_botao_excluir=0, img_numeros=0, img_quadro_pontuacao=0, img_borda=0, img_botao_parar=0, img_mouse=0, img_carregando=0, img_pronto=0, img_continue=0
 
 	//variaveis que permitem troca de sprite do personagem para permitir animação
 	inteiro indice_imagem=0, indice_imagem_exemplo=0
@@ -1615,8 +1615,15 @@ programa
 	
 	funcao tela_venceu()
 	{
-		g.desenhar_imagem(0, 0, img_fundo)
-		g.desenhar_imagem(114, 135, imagem_char)
+		enquanto(objeto_foi_clicado(mouse_esta_sobre_objeto(286, 526, 230, 50))==falso)
+		{						
+			g.desenhar_imagem(0, 0, img_fundo)
+			g.desenhar_imagem(144, 135, imagem_char)
+			g.desenhar_imagem(286, 526, img_continue)
+			desenha_mouse()
+			g.renderizar()
+			reseta_cursor()
+		}
 	}
 
 	funcao tela_placar()
@@ -1735,6 +1742,7 @@ programa
 		img_mouse=g.carregar_imagem(pasta_objetos + "mouse.png")
 		img_carregando= g.carregar_imagem(pasta_objetos + "botao_carregando.png")
 		img_pronto= g.carregar_imagem(pasta_objetos + "botao_pronto.png")
+		img_continue=g.carregar_imagem(pasta_objetos + "botao_continue.png")
 	}
 
 	funcao inicializar()
@@ -1761,8 +1769,10 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 6405; 
- * @DOBRAMENTO-CODIGO = [0, 172, 181, 190, 201, 210, 233, 237, 242, 261, 282, 294, 347, 360, 378, 396, 414, 431, 469, 500, 590, 613, 670, 677, 683, 725, 752, 782, 812, 831, 852, 884, 907, 917, 944, 952, 967, 992, 1045, 1051, 1077, 1091, 1105, 1120, 1154, 1179, 1202, 1233, 1247, 1278, 1309, 1324, 1335, 1343, 1392, 1417, 1424, 1431, 1439, 1453, 1464, 1471, 1495, 1560, 1573, 1590, 1598, 1607, 1615, 1621, 1625, 1631, 1683, 1717, 1739, 1747];
+ * @POSICAO-CURSOR = 57350; 
+ * @DOBRAMENTO-CODIGO = [0, 172, 181, 190, 201, 210, 233, 237, 242, 261, 282, 294, 347, 360, 378, 396, 414, 431, 469, 500, 590, 613, 670, 677, 683, 725, 752, 782, 812, 831, 852, 884, 907, 917, 944, 952, 967, 992, 1045, 1051, 1077, 1091, 1105, 1120, 1154, 1179, 1202, 1233, 1247, 1278, 1309, 1324, 1335, 1343, 1392, 1417, 1424, 1431, 1439, 1453, 1464, 1471, 1495, 1560, 1573, 1590, 1598, 1607, 1628, 1632, 1638, 1690, 1724, 1747, 1755];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = {acabou_fases, 164, 8, 12};
+ * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
+ * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
