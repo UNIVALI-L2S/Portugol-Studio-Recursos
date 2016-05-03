@@ -152,7 +152,8 @@ programa
 
 	//variaveis que contém pontuação
 	inteiro tempo_inicial=0
-	inteiro pontos_tempo=0, pontos_instrucoes=0, pontos_deletados=0, pontos_limpou=0, pontos_play=0, pontos_loops=0
+	inteiro pontos_tempo=0, pontos_instrucoes=0, pontos_deletados=0, pontos_limpou=0, pontos_play=0, pontos_loops=0, pontos_loop_dentro=0
+	real pontuacoes[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}
 
 	//variaveis para leitura de mapas em arquivos
 	inteiro digitos_por_tile=8, digitos_parte=2
@@ -248,7 +249,7 @@ programa
 		abrir_novo_nivel()//abre o nivel a entrar
 		se(acabou_fases)//verifica se terminou todas as fases e manda para a tela final
 		{
-			tela_final()
+			tela_venceu()
 		}					
 		definir_posicao_original()//grava a posição original do personagem para futuras checagens
 		posicao_inicial()//coloca o personagem em sua posição original
@@ -504,6 +505,7 @@ programa
 		//Dependendo da posição onde é colocado, ele pode receber  fator de estar dentro do loop ou não
 		//Se Já se tem um comando no local onde é colocado, uma posição é aberta no local para se colocar o novo comando
 		//Se é um loop a ser colocado, deve-se alocar 2 posições no quadro pra colocar o inicio e o fim do loop
+		inteiro fator_numero_de_loops=1
 		pontos_instrucoes++
 		para(inteiro i=0; i<tam_matriz_quadro[0]; i++)
 		{
@@ -516,17 +518,24 @@ programa
 						abrir_espaco_matriz(i, j)
 						se(j+1>6)
 						{
-							se(mat_pos_quadro_programavel[i+1][0]%10==COMANDO_LOOP_fim ou mat_pos_quadro_programavel[i+1][0]>100)
+							se(mat_pos_quadro_programavel[i+1][0]%10==COMANDO_LOOP_fim ou mat_pos_quadro_programavel[i+1][0]>fator_dentro_loop)
 							{
+								fator_numero_de_loops=(mat_pos_quadro_programavel[i+1][0]/fator_dentro_loop)
+								se(mat_pos_quadro_programavel[i+1][0]%10==COMANDO_LOOP_fim)
+								{
+									fator_numero_de_loops=(mat_pos_quadro_programavel[i+1][0]/fator_dentro_loop)+1
+								}
 								se(objeto_clicado==COMANDO_LOOP)
 								{
 									abrir_espaco_matriz(i+1, 0)
-									mat_pos_quadro_programavel[i][j]=COMANDO_LOOP_inicio+fator_dentro_loop
-									mat_pos_quadro_programavel[i+1][0]=COMANDO_LOOP_fim+fator_dentro_loop
+									mat_pos_quadro_programavel[i][j]=COMANDO_LOOP_inicio+(fator_dentro_loop*fator_numero_de_loops)
+									mat_pos_quadro_programavel[i+1][0]=COMANDO_LOOP_fim+(fator_dentro_loop*fator_numero_de_loops)
+									pontos_loops++
+									pontos_loop_dentro++
 									retorne
 								}	
-								mat_pos_quadro_programavel[i][j]=objeto_clicado+fator_dentro_loop
-								pontos_loops++
+								mat_pos_quadro_programavel[i][j]=objeto_clicado+(fator_dentro_loop*fator_numero_de_loops)
+								pontos_loop_dentro++
 								retorne
 							}
 							se(objeto_clicado==COMANDO_LOOP)
@@ -540,17 +549,24 @@ programa
 							mat_pos_quadro_programavel[i][j]=objeto_clicado
 							retorne	
 						}
-						se(mat_pos_quadro_programavel[i][j+1]%10==COMANDO_LOOP_fim ou mat_pos_quadro_programavel[i][j+1]>100)
+						se(mat_pos_quadro_programavel[i][j+1]%10==COMANDO_LOOP_fim ou mat_pos_quadro_programavel[i][j+1]>fator_dentro_loop)
 						{
+							fator_numero_de_loops=(mat_pos_quadro_programavel[i][j+1]/fator_dentro_loop)
+							se(mat_pos_quadro_programavel[i][j+1]%10==COMANDO_LOOP_fim)
+							{
+								fator_numero_de_loops=(mat_pos_quadro_programavel[i][j+1]/fator_dentro_loop)+1
+							}
 							se(objeto_clicado==COMANDO_LOOP)
 							{
 								abrir_espaco_matriz(i, j+1)
-								mat_pos_quadro_programavel[i][j]=COMANDO_LOOP_inicio+fator_dentro_loop
-								mat_pos_quadro_programavel[i][j+1]=COMANDO_LOOP_fim+fator_dentro_loop
+								mat_pos_quadro_programavel[i][j]=COMANDO_LOOP_inicio+(fator_dentro_loop*fator_numero_de_loops)
+								mat_pos_quadro_programavel[i][j+1]=COMANDO_LOOP_fim+(fator_dentro_loop*fator_numero_de_loops)
+								pontos_loops++
+								pontos_loop_dentro++
 								retorne
 							}	
-							mat_pos_quadro_programavel[i][j]=objeto_clicado+fator_dentro_loop
-							pontos_loops++
+							mat_pos_quadro_programavel[i][j]=objeto_clicado+(fator_dentro_loop*fator_numero_de_loops)
+							pontos_loop_dentro++
 							retorne
 						}
 						se(objeto_clicado==COMANDO_LOOP)
@@ -863,7 +879,7 @@ programa
 		          desenha_cerca(mapa_cerca_horizontal[i][j])
 		          desenha_cerca(mapa_cerca_vertical[i][j])
 				desenha_tile(mapa[i][j])
-//				debug(mapa_char[i][j])
+//				debug_mapa(mat_pos_quadro_comandos[i][j])
 //				g.renderizar()
 //				u.aguarde(100)
 				se(posicao_maty==i e posicao_matx==j)
@@ -986,6 +1002,7 @@ programa
 			para(inteiro j=0; j<tam_matriz_quadro[1]; j++)
 			{
 				desenha_comando_no_quadro(mat_pos_quadro_programavel[i][j], i, j)
+				
 			}
 		}
 	}
@@ -1019,17 +1036,20 @@ programa
 		se(s>fator_dentro_loop)
 		{
 			g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 1*tam_comandos[0], 2*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor)
-			s-=fator_dentro_loop
 		}
 		//a escolha abaixo desenha o comando a partir de sua posição e o quanto está dentro ou fora do quadro
-		escolha(s)
+		escolha(s%10)
 		{
 			caso  ESQUERDA : g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 0*tam_comandos[0], 0*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare
 			caso  DESCE 	: g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 0*tam_comandos[0], 1*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare 
 			caso  SOBE 	: g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 1*tam_comandos[0], 0*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare 
 			caso  DIREITA 	: g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 1*tam_comandos[0], 1*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare
 			caso  COMANDO_LOOP_inicio : g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 0*tam_comandos[0], 2*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare
+			caso  COMANDO_LOOP_fim : g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 2*tam_comandos[0], 2*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor) pare
 		}
+		//comentario com a funçao para verificar os numeros do quadro de comandos
+//		debug_quadro_comandos(s, posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos))
+		
 		//verificam se os botões excluir e numero de loops foram clicados e modifica quadro
 		se(comecou_a_rodar==falso)
 		{
@@ -1106,14 +1126,14 @@ programa
 	funcao desenha_pontuacao()
 	{
 		//desenha as pontuações no topo
-		cadeia texto_pontuacao="Tempo: "+ pontos_tempo +" | Instruções: "+ pontos_instrucoes +" | Loops: "+pontos_loops +" | Deletados: "+ pontos_deletados + " | Limpou: "+ pontos_limpou + " | Plays: "+ pontos_play
+		cadeia texto_pontuacao="Tempo: "+ pontos_tempo +" | Instruções: "+ pontos_instrucoes +" | Loops: "+pontos_loops +" | Deletados: "+ pontos_deletados + " | Limpou: "+ pontos_limpou + " | Plays: "+ pontos_play +" | Comandos no loop: " +pontos_loop_dentro
 
 		inteiro fator_centralizar=400
-		fator_centralizar-=(tx.numero_caracteres(texto_pontuacao)/2)*9.5
+		fator_centralizar-=(tx.numero_caracteres(texto_pontuacao)/2)*7.5
 		
 		g.desenhar_imagem(0, 0, img_quadro_pontuacao)
 		g.definir_cor(g.COR_PRETO)
-		g.definir_tamanho_texto(21.0)
+		g.definir_tamanho_texto(17.0)
 		g.desenhar_texto(fator_centralizar, 10, texto_pontuacao)	
 		g.definir_cor(0x99FF66)
 	}
@@ -1182,8 +1202,7 @@ programa
 		//verifica se o comando do fim do loop foi clicado nos botões + e -, e desenha o for necessário.
 		inteiro numero=mat_pos_quadro_programavel[i][j]
 		se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_fim)
-		{
-			g.desenhar_porcao_imagem(posicao_quadro[0]+(j*tam_comandos[0]), posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, 2*tam_comandos[0], 2*tam_comandos[1]-fator_saiu_por_cima, tam_comandos[0], tam_comandos[1]+fator_saiu_do_quadro, img_comandos_menor)
+		{			
 			se((objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+11, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima+13, 16, 16)) e mat_pos_quadro_programavel[i][j]%(fator_dentro_loop/10)>10) e nao pegou_comando e comecou_a_rodar==falso)
 			{
 				mat_pos_quadro_programavel[i][j]-=10
@@ -1194,7 +1213,7 @@ programa
 			}
 			se(numero>fator_dentro_loop)
 			{
-				numero=numero-fator_dentro_loop
+				numero=numero%fator_dentro_loop
 			}
 			desenha_numero_loop(posicao_quadro[0]+(j*tam_comandos[0])+30, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima, numero/10, fator_saiu_do_quadro, fator_saiu_por_cima)
 		}
@@ -1472,10 +1491,14 @@ programa
 	funcao retirar_comando(inteiro i, inteiro j)
 	{
 		//função que retira um comando do quadro
+		se(mat_pos_quadro_programavel[i][j]>fator_dentro_loop e (mat_pos_quadro_programavel[i][j]%10!=COMANDO_LOOP_inicio e mat_pos_quadro_programavel[i][j]%10!=COMANDO_LOOP_fim))
+		{
+			pontos_loop_dentro--
+		}
 		para(; i<tam_matriz_quadro[0]; i++)
 		{
 			para(; j<tam_matriz_quadro[1]; j++)
-			{
+			{					
 				se(j==tam_matriz_quadro[1]-1)
 				{
 					mat_pos_quadro_programavel[i][j]=mat_pos_quadro_programavel[i+1][0]
@@ -1498,17 +1521,25 @@ programa
 		//função que retira um loop do quadro.
 		//o inicio e o final do loop são retirados sem retirar os comandos dentre ele
 		inteiro pular_loop_interno=0
-		retirar_comando(i, j)
 		pontos_loops--
+		se(mat_pos_quadro_programavel[i][j]>fator_dentro_loop e mat_pos_quadro_programavel[i][j]-fator_dentro_loop<fator_dentro_loop)
+		{
+			pontos_loop_dentro--
+		}
+		retirar_comando(i, j)
 		se(tipo_a_deletar==COMANDO_LOOP_inicio)
 		{
 			para(; i<tam_matriz_quadro[0]; i++)
 			{
 				para(; j<tam_matriz_quadro[1]; j++)
-				{
-					se(mat_pos_quadro_programavel[i][j]>fator_dentro_loop e pular_loop_interno==0)
+				{					
+					se(mat_pos_quadro_programavel[i][j]>fator_dentro_loop)
 					{
 						mat_pos_quadro_programavel[i][j]-=fator_dentro_loop
+						se(mat_pos_quadro_programavel[i][j]<fator_dentro_loop e mat_pos_quadro_programavel[i][j]%10!=COMANDO_LOOP_fim)
+						{
+							pontos_loop_dentro--
+						}						
 					}
 					se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_inicio)
 					{
@@ -1516,7 +1547,6 @@ programa
 					}
 					senao se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_fim e pular_loop_interno>0)
 					{
-						mat_pos_quadro_programavel[i][j]-=fator_dentro_loop
 						pular_loop_interno--
 					}
 					senao se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_fim e pular_loop_interno==0)
@@ -1530,13 +1560,27 @@ programa
 		}
 		senao
 		{
+			se(j==0)
+			{
+				j=6
+				i--
+			}
+			senao
+			{
+				j--
+			}
 			para(; i>=0; i--)
 			{
 				para(; j>=0; j--)
 				{
-					se(mat_pos_quadro_programavel[i][j]>fator_dentro_loop  e pular_loop_interno==0)
+					
+					se(mat_pos_quadro_programavel[i][j]>fator_dentro_loop)
 					{
 						mat_pos_quadro_programavel[i][j]-=fator_dentro_loop
+						se(mat_pos_quadro_programavel[i][j]<fator_dentro_loop e mat_pos_quadro_programavel[i][j]%10!=COMANDO_LOOP_inicio)
+						{
+							pontos_loop_dentro--
+						}						
 					}
 					se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_fim)
 					{
@@ -1544,7 +1588,6 @@ programa
 					}
 					senao se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_inicio e pular_loop_interno>0)
 					{
-						mat_pos_quadro_programavel[i][j]-=fator_dentro_loop
 						pular_loop_interno--
 					}
 					senao se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_inicio e pular_loop_interno==0)
@@ -1596,13 +1639,20 @@ programa
 		char_posicao_original_y_matriz=posicao_maty
 	}
 
-	funcao debug(inteiro s)
+	funcao debug_mapa(inteiro s)
 	{
 			//essa função permite desenhar os numeros que lhe forem enviados
 			//ela é chamada no desenho do campo, é normalmente utilizada para verificar se os numeros nas matrizes estão certos
 			g.definir_cor(g.COR_PRETO)
 			g.desenhar_texto(posicao_isometrica_objeto_x+posicao_mapa[0], posicao_isometrica_objeto_y+posicao_mapa[1], tp.inteiro_para_cadeia(s, 10))	
 			g.definir_cor(0x99FF66)	
+	}
+
+	funcao debug_quadro_comandos(inteiro s, inteiro x, inteiro y)
+	{
+		g.definir_cor(g.COR_PRETO)
+		g.desenhar_texto(x, y, tp.inteiro_para_cadeia(s, 10))	
+		g.definir_cor(0x99FF66)
 	}
 
 	funcao proxima_fase()
@@ -1612,7 +1662,12 @@ programa
 		limpar_caminho_matriz()
 		iniciar_jogo()
 	}
-	
+//	
+//	funcao calcula_pontos()
+//	{
+//		pontuacoes[nivel-1]=1-((pontos_instrucoes - pontos_minimos_instrucoes) * 0.01) - (pontos_deletados * 0.01) - (pontos_limpou * 0.01) - (pontos_play * 0.01) - ((pontos_loops - pontos_loops_minimos) * 0.02) - ((pontos_loop_dentro - pontos_loop_dentro_minimo) * 0.02) - (pontos_tempo * 0.0005)
+//	}
+
 	funcao tela_venceu()
 	{
 		enquanto(objeto_foi_clicado(mouse_esta_sobre_objeto(286, 526, 230, 50))==falso)
@@ -1624,16 +1679,6 @@ programa
 			g.renderizar()
 			reseta_cursor()
 		}
-	}
-
-	funcao tela_placar()
-	{
-	}
-
-	funcao tela_final()
-	{
-		tela_venceu()
-		tela_placar()
 	}
 
 	funcao inteiro selecao_de_personagem()
@@ -1769,10 +1814,10 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 57350; 
- * @DOBRAMENTO-CODIGO = [0, 172, 181, 190, 201, 210, 233, 237, 242, 261, 282, 294, 347, 360, 378, 396, 414, 431, 469, 500, 590, 613, 670, 677, 683, 725, 752, 782, 812, 831, 852, 884, 907, 917, 944, 952, 967, 992, 1045, 1051, 1077, 1091, 1105, 1120, 1154, 1179, 1202, 1233, 1247, 1278, 1309, 1324, 1335, 1343, 1392, 1417, 1424, 1431, 1439, 1453, 1464, 1471, 1495, 1560, 1573, 1590, 1598, 1607, 1628, 1632, 1638, 1690, 1724, 1747, 1755];
+ * @POSICAO-CURSOR = 984; 
+ * @DOBRAMENTO-CODIGO = [0, 173, 182, 191, 202, 211, 234, 238, 243, 262, 283, 295, 348, 361, 379, 397, 415, 432, 470, 501, 606, 629, 686, 693, 699, 741, 768, 798, 828, 847, 868, 900, 923, 933, 960, 968, 983, 1009, 1065, 1071, 1097, 1111, 1125, 1140, 1174, 1199, 1221, 1252, 1266, 1297, 1328, 1343, 1354, 1362, 1411, 1436, 1443, 1450, 1458, 1472, 1483, 1490, 1518, 1603, 1616, 1633, 1641, 1650, 1657, 1670, 1683, 1735, 1769, 1792, 1800];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = {acabou_fases, 164, 8, 12};
+ * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
