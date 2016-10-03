@@ -70,10 +70,14 @@ programa
 
 	//variaveis para guardar imagens
 	
-	inteiro img_mapa=0, img_objects=0, img_quadro =0, img_botao_excluir=0
+	inteiro img_mapa=0, img_objects=0, img_quadro =0, img_botao_excluir=0, img_caixas_pontos =0
 	inteiro posicao_x_mouse = 0, posicao_y_mouse=0, posicao_matx = 0, posicao_maty=0
 	inteiro objeto_clicado=0
 	inteiro digitos_por_tile=8, digitos_parte=2
+
+	//variaveis de pontos base
+
+	inteiro pontos_minimos_instrucoes=0, pontos_loops_minimos=0, pontos_loop_dentro_minimo=0
 
 	inteiro NUMERO_LINHAS=8, NUMERO_COLUNAS=8
 	//variaveis para verificar ações
@@ -125,7 +129,7 @@ programa
 							{0,  3,  4,  5,  6, 21},
 							{3,  3,  4,  2,  6, 31},
 							{0,  1,  1,  6,  6, 41}}
-	
+
 	funcao criador()
 	{
 		//funcao que roda o programa
@@ -244,6 +248,9 @@ programa
 		}
 		a.escrever_linha(texto_linha, arquivo)		
 		
+		cadeia pts = tp.inteiro_para_cadeia(pontos_minimos_instrucoes, 16)+tp.inteiro_para_cadeia(pontos_loops_minimos, 16)+tp.inteiro_para_cadeia(pontos_loop_dentro_minimo, 16)
+		a.escrever_linha(pts, arquivo)
+		
 		a.fechar_arquivo(arquivo)	
 	}
 
@@ -303,6 +310,16 @@ programa
 				cadeia tcerca_h=tx.extrair_subtexto(temp, digitos_parte*3, digitos_parte*4)
 				mapa_cerca_horizontal[linha][coluna]= tp.cadeia_para_inteiro(tcerca_h, 16)			
 			}
+			texto_linha = a.ler_linha(arquivo)
+			inteiro pts[]={0,0,0}
+			para(inteiro ponto=0; ponto<3;ponto++)
+			{
+				cadeia temp = tx.extrair_subtexto(texto_linha, ponto*digitos_por_tile, ponto*digitos_por_tile+digitos_por_tile)
+				pts[ponto]=tp.cadeia_para_inteiro(temp, 16)
+			}
+			pontos_minimos_instrucoes=pts[0]
+			pontos_loops_minimos=pts[1]
+			pontos_loop_dentro_minimo=pts[2]
 
 			a.fechar_arquivo(arquivo)
 		}
@@ -338,6 +355,8 @@ programa
 		g.definir_cor(0x99FF66)
 		desenhar_mapa()
 		desenhar_quadro()
+		desenha_caixas()
+		desenha_pontos()
 		desenha_objeto_no_mouse()
 		g.renderizar()
 	}
@@ -416,6 +435,36 @@ programa
 		}
 	}
 	
+	funcao desenha_caixas()
+	{
+		g.desenhar_imagem(550, 45, img_caixas_pontos)
+	}
+	
+	funcao desenha_pontos()
+	{
+		g.definir_cor(g.COR_PRETO)
+		g.definir_tamanho_texto(17.0)
+		
+		inteiro fator_centralizar=650
+		
+		cadeia texto_pontos = ""+pontos_minimos_instrucoes//  pontos_loop_dentro_minimo
+		
+		fator_centralizar-=(tx.numero_caracteres(texto_pontos)/2)*7.5		
+		g.desenhar_texto(fator_centralizar, 85, texto_pontos)	
+		
+		texto_pontos = ""+pontos_loops_minimos// pontos_loops_minimos pontos_loop_dentro_minimo
+		
+		fator_centralizar-=(tx.numero_caracteres(texto_pontos)/2)*7.5		
+		g.desenhar_texto(fator_centralizar, 168, texto_pontos)	
+		
+		texto_pontos = ""+pontos_loop_dentro_minimo// pontos_loops_minimos 
+		
+		fator_centralizar-=(tx.numero_caracteres(texto_pontos)/2)*7.5		
+		g.desenhar_texto(fator_centralizar, 270, texto_pontos)	
+		
+		g.definir_cor(0x99FF66)
+	}
+		
 	funcao desenhar_quadro()
 	{
 		//desenha o quadro e seus objetos
@@ -640,6 +689,7 @@ programa
 		img_objects = g.carregar_imagem(pasta_objetos + "objects_2d.png")
 		img_quadro = g.carregar_imagem(pasta_objetos + "quadro_objetos.png")
 		img_botao_excluir = g.carregar_imagem(pasta_objetos + "botao_limpar.png")
+		img_caixas_pontos = g.carregar_imagem(pasta_objetos + "caixas_pontos.png")
 	}
 	
 	funcao inicializar()
@@ -664,6 +714,10 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 629; 
- * @DOBRAMENTO-CODIGO = [128, 139, 184, 197, 249, 263, 310, 333, 344, 366, 382, 392, 407, 418, 425, 488, 495, 514, 592, 608, 621, 632, 644, 652];
+ * @POSICAO-CURSOR = 15076; 
+ * @DOBRAMENTO-CODIGO = [0, 132, 143, 188, 201, 256, 270, 327, 363, 385, 401, 411, 426, 437, 467, 474, 537, 544, 563, 641, 657, 670, 681, 694, 702];
+ * @PONTOS-DE-PARADA = ;
+ * @SIMBOLOS-INSPECIONADOS = ;
+ * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
+ * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
