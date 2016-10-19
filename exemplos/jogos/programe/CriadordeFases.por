@@ -65,8 +65,11 @@ programa
 	const inteiro posicao_mapa_cerca[2] = {247, 45}
 	const inteiro posicao_quadro[2] = {130, 387}
 	const inteiro posicao_objetos[2] = {182, 387}
+	const inteiro posicao_caixas[2] = {550, 45}
 
 	const inteiro tamanho_objetos[2] = {67, 44}
+	const inteiro tamanho_mais[2] = {15,15}
+	const inteiro tamanho_menos[2] = {16,9}
 
 	//variaveis para guardar imagens
 	
@@ -184,6 +187,7 @@ programa
 			}
 			
 		}
+		verifica_botoes_pontos()
 	}
 
 	funcao salvar_arquivo()
@@ -437,7 +441,7 @@ programa
 	
 	funcao desenha_caixas()
 	{
-		g.desenhar_imagem(550, 45, img_caixas_pontos)
+		g.desenhar_imagem(posicao_caixas[0], posicao_caixas[1], img_caixas_pontos)
 	}
 	
 	funcao desenha_pontos()
@@ -453,12 +457,12 @@ programa
 		g.desenhar_texto(fator_centralizar, 85, texto_pontos)	
 		
 		texto_pontos = ""+pontos_loops_minimos// pontos_loops_minimos pontos_loop_dentro_minimo
-		
+		fator_centralizar=650
 		fator_centralizar-=(tx.numero_caracteres(texto_pontos)/2)*7.5		
 		g.desenhar_texto(fator_centralizar, 168, texto_pontos)	
 		
 		texto_pontos = ""+pontos_loop_dentro_minimo// pontos_loops_minimos 
-		
+		fator_centralizar=650
 		fator_centralizar-=(tx.numero_caracteres(texto_pontos)/2)*7.5		
 		g.desenhar_texto(fator_centralizar, 270, texto_pontos)	
 		
@@ -638,6 +642,44 @@ programa
 			}
 		}
 	}
+	
+	funcao verifica_botoes_pontos()
+	{
+		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+31, tamanho_mais[0], tamanho_mais[1])))
+		{
+			pontos_minimos_instrucoes++
+		}
+		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+62, tamanho_menos[0], tamanho_menos[1])))
+		{
+			se(pontos_minimos_instrucoes>0)
+			{
+				pontos_minimos_instrucoes--
+			}			
+		}
+		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+115, tamanho_mais[0], tamanho_mais[1])))
+		{
+			pontos_loops_minimos++
+		}
+		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+145, tamanho_menos[0], tamanho_menos[1])))
+		{
+			se(pontos_loops_minimos>0)
+			{					
+				pontos_loops_minimos--
+			}
+		}
+		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+216, tamanho_mais[0], tamanho_mais[1])))
+		{
+			pontos_loop_dentro_minimo++
+		}
+		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+245, tamanho_menos[0], tamanho_menos[1])))
+		{
+			se(pontos_loop_dentro_minimo>0)
+			{
+				pontos_loop_dentro_minimo--
+			}			
+		}
+		
+	}
 		
 	funcao inteiro objeto_selecionado()
 	{
@@ -714,8 +756,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 15076; 
- * @DOBRAMENTO-CODIGO = [0, 132, 143, 188, 201, 256, 270, 327, 363, 385, 401, 411, 426, 437, 467, 474, 537, 544, 563, 641, 657, 670, 681, 694, 702];
+ * @POSICAO-CURSOR = 23387; 
+ * @DOBRAMENTO-CODIGO = [0, 135, 146, 192, 205, 260, 274, 331, 354, 367, 389, 405, 415, 430, 441, 446, 471, 478, 541, 548, 567, 683, 699, 712, 723, 736, 744];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
