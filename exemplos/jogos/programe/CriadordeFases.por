@@ -42,6 +42,12 @@ programa
 	const inteiro BOTAO_SALVAR=18
 	const inteiro BOTAO_ABRIR=28
 	const inteiro BOTAO_EXCLUIR=38
+	const inteiro BOTAO_AUMENTAR_PMI = 48
+	const inteiro BOTAO_DIMINUIR_PMI = 58
+	const inteiro BOTAO_AUMENTAR_PLM = 68
+	const inteiro BOTAO_DIMINUIR_PLM = 78
+	const inteiro BOTAO_AUMENTAR_PLDM = 88
+	const inteiro BOTAO_DIMINUIR_PLDM = 98
 
 	const inteiro ARVORE =20
 	const inteiro BLOCO  =10
@@ -197,7 +203,8 @@ programa
 		{
 			"Arquivos de Level|lvl"
 		}
-		se(a.selecionar_arquivo(formatos, falso, nome_arquivo))
+		nome_arquivo = a.selecionar_arquivo(formatos, falso)
+		se(tx.numero_caracteres(nome_arquivo)>0)
 		{
 			escrever_nivel(nome_arquivo)
 		}
@@ -252,7 +259,11 @@ programa
 		}
 		a.escrever_linha(texto_linha, arquivo)		
 		
-		cadeia pts = tp.inteiro_para_cadeia(pontos_minimos_instrucoes, 16)+tp.inteiro_para_cadeia(pontos_loops_minimos, 16)+tp.inteiro_para_cadeia(pontos_loop_dentro_minimo, 16)
+		cadeia pts = tp.inteiro_para_cadeia(pontos_minimos_instrucoes, 16)
+		a.escrever_linha(pts, arquivo)
+		pts = tp.inteiro_para_cadeia(pontos_loops_minimos, 16)
+		a.escrever_linha(pts, arquivo)
+		pts = tp.inteiro_para_cadeia(pontos_loop_dentro_minimo, 16)
 		a.escrever_linha(pts, arquivo)
 		
 		a.fechar_arquivo(arquivo)	
@@ -265,8 +276,8 @@ programa
 		{
 			"Arquivos de Level|lvl"
 		}
-		
-		se(a.selecionar_arquivo(formatos, falso, nome_arquivo))
+		nome_arquivo = a.selecionar_arquivo(formatos, falso)
+		se(tx.numero_caracteres(nome_arquivo)>0)
 		{
 			carregar_nivel(nome_arquivo)
 		}
@@ -314,17 +325,9 @@ programa
 				cadeia tcerca_h=tx.extrair_subtexto(temp, digitos_parte*3, digitos_parte*4)
 				mapa_cerca_horizontal[linha][coluna]= tp.cadeia_para_inteiro(tcerca_h, 16)			
 			}
-			texto_linha = a.ler_linha(arquivo)
-			inteiro pts[]={0,0,0}
-			para(inteiro ponto=0; ponto<3;ponto++)
-			{
-				cadeia temp = tx.extrair_subtexto(texto_linha, ponto*digitos_por_tile, ponto*digitos_por_tile+digitos_por_tile)
-				pts[ponto]=tp.cadeia_para_inteiro(temp, 16)
-			}
-			pontos_minimos_instrucoes=pts[0]
-			pontos_loops_minimos=pts[1]
-			pontos_loop_dentro_minimo=pts[2]
-
+			pontos_minimos_instrucoes = tp.cadeia_para_inteiro(a.ler_linha(arquivo), 16)
+			pontos_loops_minimos = tp.cadeia_para_inteiro(a.ler_linha(arquivo), 16)
+			pontos_loop_dentro_minimo = tp.cadeia_para_inteiro(a.ler_linha(arquivo), 16)
 			a.fechar_arquivo(arquivo)
 		}
 	}
@@ -645,38 +648,91 @@ programa
 	
 	funcao verifica_botoes_pontos()
 	{
-		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+31, tamanho_mais[0], tamanho_mais[1])))
+		se(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+31, tamanho_mais[0], tamanho_mais[1]))
 		{
-			pontos_minimos_instrucoes++
-		}
-		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+62, tamanho_menos[0], tamanho_menos[1])))
-		{
-			se(pontos_minimos_instrucoes>0)
+			se(objeto_foi_clicado(verdadeiro))
 			{
-				pontos_minimos_instrucoes--
-			}			
-		}
-		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+115, tamanho_mais[0], tamanho_mais[1])))
-		{
-			pontos_loops_minimos++
-		}
-		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+145, tamanho_menos[0], tamanho_menos[1])))
-		{
-			se(pontos_loops_minimos>0)
-			{					
-				pontos_loops_minimos--
+				objeto_clicado=BOTAO_AUMENTAR_PMI
 			}
-		}
-		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+216, tamanho_mais[0], tamanho_mais[1])))
-		{
-			pontos_loop_dentro_minimo++
-		}
-		se(objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+245, tamanho_menos[0], tamanho_menos[1])))
-		{
-			se(pontos_loop_dentro_minimo>0)
+			se(objeto_foi_clicado(verdadeiro)==falso e objeto_clicado==BOTAO_AUMENTAR_PMI)
 			{
-				pontos_loop_dentro_minimo--
-			}			
+				objeto_clicado = 0
+				pontos_minimos_instrucoes++
+			}	
+		}
+
+		se(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+62, tamanho_menos[0], tamanho_menos[1]))
+		{
+			se(objeto_foi_clicado(verdadeiro))
+			{
+				objeto_clicado=BOTAO_DIMINUIR_PMI
+			}
+			se(objeto_foi_clicado(verdadeiro)==falso e objeto_clicado==BOTAO_DIMINUIR_PMI)
+			{
+				objeto_clicado = 0
+				se(pontos_minimos_instrucoes>0)
+				{
+					pontos_minimos_instrucoes--
+				}
+			}	
+		}
+
+		se(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+115, tamanho_mais[0], tamanho_mais[1]))
+		{
+			se(objeto_foi_clicado(verdadeiro))
+			{
+				objeto_clicado=BOTAO_AUMENTAR_PLM
+			}
+			se(objeto_foi_clicado(verdadeiro)==falso e objeto_clicado==BOTAO_AUMENTAR_PLM)
+			{
+				objeto_clicado = 0
+				pontos_loops_minimos++
+			}	
+		}
+
+		se(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+145, tamanho_menos[0], tamanho_menos[1]))
+		{
+			se(objeto_foi_clicado(verdadeiro))
+			{
+				objeto_clicado=BOTAO_DIMINUIR_PLM
+			}
+			se(objeto_foi_clicado(verdadeiro)==falso e objeto_clicado==BOTAO_DIMINUIR_PLM)
+			{
+				objeto_clicado = 0
+				se(pontos_loops_minimos>0)
+				{
+					pontos_loops_minimos--
+				}
+			}	
+		}
+		
+		se(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+216, tamanho_mais[0], tamanho_mais[1]))
+		{
+			se(objeto_foi_clicado(verdadeiro))
+			{
+				objeto_clicado=BOTAO_AUMENTAR_PLDM
+			}
+			se(objeto_foi_clicado(verdadeiro)==falso e objeto_clicado==BOTAO_AUMENTAR_PLDM)
+			{
+				objeto_clicado = 0
+				pontos_loop_dentro_minimo++
+			}	
+		}
+
+		se(mouse_esta_sobre_objeto(posicao_caixas[0]+150, posicao_caixas[1]+245, tamanho_menos[0], tamanho_menos[1]))
+		{
+			se(objeto_foi_clicado(verdadeiro))
+			{
+				objeto_clicado=BOTAO_DIMINUIR_PLDM
+			}
+			se(objeto_foi_clicado(verdadeiro)==falso e objeto_clicado==BOTAO_DIMINUIR_PLDM)
+			{
+				objeto_clicado = 0
+				se(pontos_loop_dentro_minimo>0)
+				{
+					pontos_loop_dentro_minimo--
+				}
+			}	
 		}
 		
 	}
@@ -756,8 +812,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 23387; 
- * @DOBRAMENTO-CODIGO = [0, 135, 146, 192, 205, 260, 274, 331, 354, 367, 389, 405, 415, 430, 441, 446, 471, 478, 541, 548, 567, 683, 699, 712, 723, 736, 744];
+ * @POSICAO-CURSOR = 24159; 
+ * @DOBRAMENTO-CODIGO = [0, 99, 108, 117, 127, 136, 141, 152, 198, 212, 271, 285, 334, 357, 370, 392, 408, 418, 433, 444, 449, 474, 481, 544, 551, 570, 739, 755, 768, 779, 792, 800];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;

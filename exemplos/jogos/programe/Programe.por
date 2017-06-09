@@ -65,6 +65,8 @@ programa
 		const inteiro BOTAO_RESET = 6
 		const inteiro BOTAO_EXCLUIR =7
 		const inteiro BOTAO_PARAR = 10
+		const inteiro BOTAO_AUMENTAR_LOOP = 11
+		const inteiro BOTAO_DIMINUIR_LOOP = 12
 		
 
 		//constantes de tamanho de objeto
@@ -85,6 +87,8 @@ programa
 		const real posicao_botoes[3]={420.0, 484.0, 557.0}
 		const real posicao_setas[3]={539.0, 390.0, 436.0}
 
+		const inteiro TAXA_DE_ATUALIZACAO = 60
+
 	//variaveis de imagem
 	inteiro selecao_boy=0, selecao_girl=0, img_ajuda=0, img_fundo=0
 	inteiro img_boy=0, img_girl=0, imagem_charf = 0, imagem_chara = 0, imagem_chars=0, imagem_char=0, imagem_exemplo=0, img_venceu=0
@@ -94,7 +98,7 @@ programa
 	//variaveis que permitem troca de sprite do personagem para permitir animação
 	inteiro indice_imagem=0, indice_imagem_exemplo=0
 	//limita a troca de imagens
-	inteiro imagemporturnos=1, imagemporturnos_exemplo=1
+	inteiro imagemporturnos=1, imagemporturnos_exemplo=1, frames = 0, tempo_quadro = 0, tempo_restante =0, tempo_inicio=0, fps = 0
 
 	//variaveis de posicao de objeto/persoangem
 	real posicao_objeto_x = 0.0, posicao_objeto_y= 0.0, posicao_isometrica_objeto_x = 0.0, posicao_isometrica_objeto_y= 0.0
@@ -153,7 +157,8 @@ programa
 	//variaveis que contém pontuação
 	inteiro tempo_inicial=0
 	inteiro pontos_tempo=0, pontos_instrucoes=0, pontos_deletados=0, pontos_limpou=0, pontos_play=0, pontos_loops=0, pontos_loop_dentro=0
-	real pontuacoes[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}
+	real pontuacoes[]={0.0,0.0,0.0}
+	inteiro pontos_minimos_instrucoes = 0, pontos_loops_minimos = 0, pontos_loop_dentro_minimo = 0
 
 	//variaveis para leitura de mapas em arquivos
 	inteiro digitos_por_tile=8, digitos_parte=2
@@ -260,6 +265,35 @@ programa
 		proxima_fase()//se chegou ao final, sairá do loop e irá a próxima fase
 	}
 
+	funcao conta_fps()
+	{
+		frames++
+		g.definir_cor(g.COR_PRETO)	
+		g.desenhar_texto(50, 50, "FPS: "+fps)
+		se(pontos_tempo<u.tempo_decorrido()/1000-tempo_inicial/1000)
+		{
+			fps=frames						
+			frames=0			
+		}
+	}
+
+	funcao iniciar_sincronia_da_taxa_de_atualizacao()
+	{
+		tempo_inicio = u.tempo_decorrido() + tempo_restante
+	}
+
+	funcao finalizar_sincronia_da_taxa_de_atualizacao()
+	{
+		inteiro tempo_decorrido = u.tempo_decorrido() - tempo_inicio
+		tempo_restante = tempo_quadro - tempo_decorrido 
+
+		enquanto (TAXA_DE_ATUALIZACAO > 0 e tempo_restante > 0)
+		{
+			tempo_decorrido = u.tempo_decorrido() - tempo_inicio
+			tempo_restante = tempo_quadro - tempo_decorrido
+		}
+	}
+	
 	funcao limpar_campo()
 	{
 		//zera todos mapas, deixando livres para novo mapa
@@ -280,7 +314,7 @@ programa
 			mapa_cerca_horizontal[i][j]=0	
 		}
 	}
-
+		
 	funcao abrir_novo_nivel()
 	{
 		nome_arquivo="./fases/"+"nivel"+nivel+".lvl" //coloca o caminho onde está o arquivo
@@ -337,7 +371,9 @@ programa
 			//No arquivo os tiles estão por 4 Hexadecimais, sendo cada um para um mapa diferente, 
 			//assim cada função acima quebra o numero no arquivo 
 			//e coloca para cada lugar no seu respectivo mapa
-
+			pontos_minimos_instrucoes = tp.cadeia_para_inteiro(a.ler_linha(arquivo), 16)
+			pontos_loops_minimos = tp.cadeia_para_inteiro(a.ler_linha(arquivo), 16)
+			pontos_loop_dentro_minimo = tp.cadeia_para_inteiro(a.ler_linha(arquivo), 16)
 			a.fechar_arquivo(arquivo)
 		}
 		senao
@@ -364,10 +400,12 @@ programa
 		//comaça a jogar
 		faca
 		{
+//			iniciar_sincronia_da_taxa_de_atualizacao()
 			pega_comando()//função que permite pegar um comando e colocar no quadro
 			desenhar()//função que desenha o que precisa na tela
 			acha_mouse()//atualiza a posição do mouse
 			reseta_cursor()
+//			finalizar_sincronia_da_taxa_de_atualizacao()
 			se(deu_reset())
 			{
 				resetar()// se o objeto da lixeira for clicado o quadro de comandos é limpado
@@ -635,6 +673,7 @@ programa
 		acha_char()//atualiza as variaveis com a posição do personagem
 		faca
 		{
+			
 			reseta_cursor()
 			se(nao eh_um_loop())//se o comando atual não for um inicio ou fim de loop
 			{
@@ -669,6 +708,7 @@ programa
 				}			
 			}
 			acha_mouse()//atualiza posição do mouse
+			
 			se(parou)
 			{
 				pare
@@ -699,7 +739,7 @@ programa
 	
 	funcao logico eh_um_loop()
 	{
-		se(mat_pos_quadro_programavel[pos_quadro_y][pos_quadro_x]==COMANDO_LOOP_inicio)
+		se(mat_pos_quadro_programavel[pos_quadro_y][pos_quadro_x]%10==COMANDO_LOOP_inicio)
 		{
 			//se o comando atual é o inicio de um loop, a posição dele é colocada na pilha
 			pilha_de_posicao_dos_loops_x[topo_pilha_de_posicao]=pos_quadro_x
@@ -713,7 +753,7 @@ programa
 			{
 				//se o comando atual é o fim de um loop e o for diferente do topo da pilha da posição dos loops finais, então ele é adicionado a pilha dos finais
 				topo_pilha_de_numero_de_loops++
-				pilha_de_numero_de_loops[topo_pilha_de_numero_de_loops]=mat_pos_quadro_programavel[pos_quadro_y][pos_quadro_x]/10
+				pilha_de_numero_de_loops[topo_pilha_de_numero_de_loops]=(mat_pos_quadro_programavel[pos_quadro_y][pos_quadro_x]%10000)/10
 				pilha_de_posicao_fim_x[topo_pilha_de_numero_de_loops]=pos_quadro_x
 				pilha_de_posicao_fim_y[topo_pilha_de_numero_de_loops]=pos_quadro_y
 			}
@@ -827,9 +867,9 @@ programa
 	}
 	
 	funcao desenhar()
-	{
+	{			
 			//funções de desenho
-			pontos_tempo=u.tempo_decorrido()/1000-tempo_inicial/1000
+			iniciar_sincronia_da_taxa_de_atualizacao()
 			g.limpar()
 			g.definir_cor(0x99FF66)
 			ajusta_matriz_cercas()
@@ -840,9 +880,12 @@ programa
 			desenha_exemplo()
 			desenha_botoes()
 			desenha_comando_no_mouse()
-			desenha_pontuacao()
-			desenha_mouse()
+			conta_fps()
+			pontos_tempo=u.tempo_decorrido()/1000-tempo_inicial/1000
+			desenha_pontuacao()			
+			desenha_mouse()			
 			g.renderizar()
+			finalizar_sincronia_da_taxa_de_atualizacao()
 	}
 
 	funcao desenha_mouse()
@@ -975,7 +1018,7 @@ programa
 		{	
 			se(imagemporturnos%5==0)
 			{
-			indice_imagem = (indice_imagem + 1) % 5
+				indice_imagem = (indice_imagem + 1) % 5
 			}
 			imagemporturnos++  
 		}
@@ -1165,9 +1208,9 @@ programa
 			fator_centralizar=10/j
 		}
 		
-		para(j; j<u.numero_elementos(numeros);j++)
+		para(inteiro g = j; g<u.numero_elementos(numeros);g++)
 		{
-			g.desenhar_porcao_imagem(x+fator_separar*10-fator_centralizar, y, numeros[j]*10, 0-fator_saiu_por_cima, 10, 20+fator_saiu_do_quadro, img_numeros)
+			g.desenhar_porcao_imagem(x+fator_separar*10-fator_centralizar, y, numeros[g]*10, 0-fator_saiu_por_cima, 10, 20+fator_saiu_do_quadro, img_numeros)
 			fator_separar++
 		}
 	}
@@ -1202,15 +1245,35 @@ programa
 		//verifica se o comando do fim do loop foi clicado nos botões + e -, e desenha o for necessário.
 		inteiro numero=mat_pos_quadro_programavel[i][j]
 		se(mat_pos_quadro_programavel[i][j]%10==COMANDO_LOOP_fim)
-		{			
-			se((objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+11, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima+13, 16, 16)) e mat_pos_quadro_programavel[i][j]%(fator_dentro_loop/10)>10) e nao pegou_comando e comecou_a_rodar==falso)
+		{
+			
+			se(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+11, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima+13, 16, 16) e nao pegou_comando e comecou_a_rodar==falso)
 			{
-				mat_pos_quadro_programavel[i][j]-=10
+				se((objeto_foi_clicado(verdadeiro) e (mat_pos_quadro_programavel[i][j]%(fator_dentro_loop/10)>10)))
+				{
+					objeto_clicado=BOTAO_DIMINUIR_LOOP
+				}
+				se((objeto_foi_clicado(verdadeiro)==falso e (mat_pos_quadro_programavel[i][j]%(fator_dentro_loop/10)>10)) e objeto_clicado==BOTAO_DIMINUIR_LOOP)
+				{
+					objeto_clicado=0
+					mat_pos_quadro_programavel[i][j]-=10
+				}
+				
 			}
-			se((objeto_foi_clicado(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+46, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima+13, 16, 16))) e nao pegou_comando e comecou_a_rodar==falso)
+
+			se(mouse_esta_sobre_objeto(posicao_quadro[0]+(j*tam_comandos[0])+46, posicao_quadro[1]+(i*(tam_comandos[1])+fator_mexer_matriz_comandos)-fator_saiu_por_cima+13, 16, 16) e nao pegou_comando e comecou_a_rodar==falso)
 			{
-				mat_pos_quadro_programavel[i][j]+=10
+				se(objeto_foi_clicado(verdadeiro))
+				{
+					objeto_clicado=BOTAO_AUMENTAR_LOOP
+				}
+				se(objeto_foi_clicado(verdadeiro)==falso e objeto_clicado==BOTAO_AUMENTAR_LOOP)
+				{
+					objeto_clicado=0
+					mat_pos_quadro_programavel[i][j]+=10
+				}
 			}
+				
 			se(numero>fator_dentro_loop)
 			{
 				numero=numero%fator_dentro_loop
@@ -1658,23 +1721,32 @@ programa
 	funcao proxima_fase()
 	{
 		//inicia próxima fase
+		calcula_pontos()
 		nivel++
 		limpar_caminho_matriz()
 		iniciar_jogo()
 	}
-//	
-//	funcao calcula_pontos()
-//	{
-//		pontuacoes[nivel-1]=1-((pontos_instrucoes - pontos_minimos_instrucoes) * 0.01) - (pontos_deletados * 0.01) - (pontos_limpou * 0.01) - (pontos_play * 0.01) - ((pontos_loops - pontos_loops_minimos) * 0.02) - ((pontos_loop_dentro - pontos_loop_dentro_minimo) * 0.02) - (pontos_tempo * 0.0005)
-//	}
+	
+	funcao calcula_pontos()
+	{
+		pontuacoes[nivel-1]=1-((pontos_instrucoes - pontos_minimos_instrucoes) * 0.01) - (pontos_deletados * 0.01) - (pontos_limpou * 0.01) - (pontos_play * 0.01) - ((pontos_loops - pontos_loops_minimos) * 0.02) - ((pontos_loop_dentro - pontos_loop_dentro_minimo) * 0.02) - (pontos_tempo * 0.0005)
+	}
 
 	funcao tela_venceu()
 	{
+		real pontuacao_final = 0.0
+
+		para(inteiro i =0; i<u.numero_elementos(pontuacoes); i++)
+		{
+			pontuacao_final+=pontuacoes[i]
+		}
+		pontuacao_final = pontuacao_final/u.numero_elementos(pontuacoes)
 		enquanto(objeto_foi_clicado(mouse_esta_sobre_objeto(286, 526, 230, 50))==falso)
 		{						
 			g.desenhar_imagem(0, 0, img_fundo)
 			g.desenhar_imagem(144, 135, imagem_char)
-			g.desenhar_imagem(286, 526, img_continue)
+			g.definir_cor(g.COR_PRETO)			
+			g.desenhar_texto(400, 326, "SUA PONTUACAO FINAL: "+m.arredondar(pontuacao_final*100, 2))
 			desenha_mouse()
 			g.renderizar()
 			reseta_cursor()
@@ -1792,10 +1864,14 @@ programa
 
 	funcao inicializar()
 	{
+		se (TAXA_DE_ATUALIZACAO > 0)
+		{
+			tempo_quadro = 1000 / TAXA_DE_ATUALIZACAO
+		}
 		//inicia o modo gráfico
 		g.iniciar_modo_grafico(verdadeiro)
 		g.definir_dimensoes_janela(800, 600)
-		g.definir_titulo_janela("JogoLite")
+		g.definir_titulo_janela("Programe")
 	}
 
 	funcao inicio()
@@ -1814,8 +1890,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 43328; 
- * @DOBRAMENTO-CODIGO = [0, 173, 182, 191, 202, 211, 234, 238, 243, 262, 283, 295, 348, 361, 379, 397, 415, 432, 470, 501, 606, 629, 686, 693, 699, 741, 768, 798, 828, 847, 868, 900, 923, 933, 960, 968, 983, 1009, 1065, 1071, 1097, 1111, 1174, 1199, 1221, 1252, 1266, 1297, 1328, 1343, 1354, 1362, 1411, 1436, 1443, 1450, 1458, 1472, 1483, 1490, 1518, 1603, 1616, 1633, 1641, 1650, 1657, 1670, 1683, 1735, 1792, 1800];
+ * @POSICAO-CURSOR = 61880; 
+ * @DOBRAMENTO-CODIGO = [0, 172, 178, 187, 196, 207, 216, 239, 243, 248, 267, 279, 284, 296, 317, 329, 384, 397, 417, 435, 453, 470, 508, 539, 644, 667, 726, 733, 739, 781, 808, 838, 868, 890, 911, 943, 966, 976, 1003, 1011, 1026, 1052, 1108, 1114, 1140, 1154, 1168, 1183, 1217, 1242, 1284, 1315, 1329, 1360, 1391, 1406, 1417, 1425, 1474, 1499, 1506, 1513, 1521, 1535, 1546, 1553, 1581, 1666, 1679, 1696, 1704, 1713, 1720, 1729, 1755, 1807, 1841, 1864, 1876];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
