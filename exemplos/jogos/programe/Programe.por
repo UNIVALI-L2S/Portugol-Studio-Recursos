@@ -94,6 +94,7 @@ programa
 	inteiro img_boy=0, img_girl=0, imagem_charf = 0, imagem_chara = 0, imagem_chars=0, imagem_char=0, imagem_exemplo=0, img_venceu=0
 	inteiro img_mapa = 0, img_objects = 0, img_quadros =0, img_quadros_adjacentes=0,  img_comandos = 0,img_comandos_menor=0
 	inteiro img_botoes=0, img_setas=0, img_botao_excluir=0, img_numeros=0, img_quadro_pontuacao=0, img_borda=0, img_botao_parar=0, img_mouse=0, img_carregando=0, img_pronto=0, img_continue=0
+	inteiro happy = 0, happy2 =0, endgame = 0
 
 	//variaveis que permitem troca de sprite do personagem para permitir animação
 	inteiro indice_imagem=0, indice_imagem_exemplo=0
@@ -1744,9 +1745,13 @@ programa
 		enquanto(objeto_foi_clicado(mouse_esta_sobre_objeto(286, 526, 230, 50))==falso)
 		{						
 			g.desenhar_imagem(0, 0, img_fundo)
-			g.desenhar_imagem(144, 135, imagem_char)
-			g.definir_cor(g.COR_PRETO)			
-			g.desenhar_texto(400, 326, "SUA PONTUACAO FINAL: "+m.arredondar(pontuacao_final*100, 2))
+			g.desenhar_imagem(100, 270, imagem_char)
+			g.definir_cor(g.COR_PRETO)
+			g.definir_tamanho_texto(24.0)
+			g.desenhar_imagem(370, 327, endgame)
+			g.desenhar_texto(590, 485, ""+m.arredondar(pontuacao_final*10, 2))			
+			g.desenhar_imagem(-80, 0, happy)
+			g.desenhar_imagem(400, -11, happy2)
 			desenha_mouse()
 			g.renderizar()
 			reseta_cursor()
@@ -1860,6 +1865,10 @@ programa
 		img_carregando= g.carregar_imagem(pasta_objetos + "botao_carregando.png")
 		img_pronto= g.carregar_imagem(pasta_objetos + "botao_pronto.png")
 		img_continue=g.carregar_imagem(pasta_objetos + "botao_continue.png")
+		happy=g.carregar_imagem(pasta_objetos + "happy.gif")
+		happy2=g.carregar_imagem(pasta_objetos + "happy2.gif")
+		endgame=g.carregar_imagem(pasta_objetos + "endgame.png")
+		
 	}
 
 	funcao inicializar()
@@ -1890,8 +1899,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 61880; 
- * @DOBRAMENTO-CODIGO = [0, 172, 178, 187, 196, 207, 216, 239, 243, 248, 267, 279, 284, 296, 317, 329, 384, 397, 417, 435, 453, 470, 508, 539, 644, 667, 726, 733, 739, 781, 808, 838, 868, 890, 911, 943, 966, 976, 1003, 1011, 1026, 1052, 1108, 1114, 1140, 1154, 1168, 1183, 1217, 1242, 1284, 1315, 1329, 1360, 1391, 1406, 1417, 1425, 1474, 1499, 1506, 1513, 1521, 1535, 1546, 1553, 1581, 1666, 1679, 1696, 1704, 1713, 1720, 1729, 1755, 1807, 1841, 1864, 1876];
+ * @POSICAO-CURSOR = 6490; 
+ * @DOBRAMENTO-CODIGO = [0, 173, 179, 188, 197, 208, 217, 240, 244, 249, 268, 280, 285, 297, 318, 330, 385, 398, 418, 436, 454, 471, 509, 540, 645, 668, 727, 734, 740, 782, 809, 839, 869, 891, 912, 944, 967, 977, 1004, 1012, 1027, 1053, 1109, 1115, 1141, 1155, 1169, 1184, 1218, 1243, 1285, 1316, 1330, 1361, 1392, 1407, 1418, 1426, 1475, 1500, 1507, 1514, 1522, 1536, 1547, 1554, 1582, 1667, 1680, 1697, 1705, 1714, 1721, 1730, 1735, 1760, 1812, 1846, 1873, 1885];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
