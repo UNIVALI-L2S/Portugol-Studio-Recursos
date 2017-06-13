@@ -812,8 +812,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 24159; 
- * @DOBRAMENTO-CODIGO = [0, 99, 108, 117, 127, 136, 141, 152, 198, 212, 271, 285, 334, 357, 370, 392, 408, 418, 433, 444, 449, 474, 481, 544, 551, 570, 739, 755, 768, 779, 792, 800];
+ * @POSICAO-CURSOR = 1347; 
+ * @DOBRAMENTO-CODIGO = [0, 99, 108, 117, 127, 136, 141, 152, 198, 212, 271, 285, 334, 357, 370, 392, 408, 418, 433, 444, 449, 474, 481, 544, 551, 570, 648, 739, 755, 768, 779, 792, 800];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;

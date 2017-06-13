@@ -519,9 +519,10 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 6354; 
+ * @POSICAO-CURSOR = 226; 
+ * @DOBRAMENTO-CODIGO = [49, 64, 71, 78, 89, 102, 176, 193, 211, 215, 219, 224, 234, 259, 264, 290, 325, 338, 368, 378, 425, 489, 497, 505];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = {pontuacao, 37, 50, 9};
+ * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
