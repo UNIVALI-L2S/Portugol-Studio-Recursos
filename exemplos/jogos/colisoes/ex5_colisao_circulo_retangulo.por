@@ -631,5 +631,7 @@ programa
  * @POSICAO-CURSOR = 210; 
  * @DOBRAMENTO-CODIGO = [45, 56, 65, 84, 111, 137, 164, 190, 199, 207, 234, 262, 267, 272, 280, 290, 311, 317, 332, 340, 353, 375, 393, 400, 437, 464, 487, 492, 497, 522, 527, 532, 544, 556, 568, 580, 585, 595, 602, 609];
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = {exibir_guias, 26, 8, 12}-{x1, 31, 9, 2}-{y1, 32, 9, 2};
+ * @SIMBOLOS-INSPECIONADOS = ;
+ * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
+ * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */

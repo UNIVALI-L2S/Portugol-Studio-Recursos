@@ -40,7 +40,7 @@ programa
 	logico DEMO_mode = falso
 	
 
-	inteiro player1[6], player2[6], bolinha[8], passo=4, max_vel=7
+	inteiro player1[6], player2[6], bolinha[8], passo=1, max_vel=7
 
 
 	inteiro colision_music, colision_play
@@ -48,6 +48,10 @@ programa
 	logico pausado = falso
 
 	funcao resetar_bolinha(){
+		se(tela_w>1400)
+		{
+			passo=4
+		}
 		bolinha[X] = campo[X]+campo[LARGURA]/2
 		bolinha[ALTURA] = tamanho_tile
 		bolinha[LARGURA] = tamanho_tile
@@ -192,7 +196,11 @@ programa
 	}
 
 	funcao desenhar_atalhos(){
-		g.definir_tamanho_texto(30)
+		g.definir_tamanho_texto(15.0)
+		se(tela_w>1400)
+		{
+			g.definir_tamanho_texto(30.0)
+		}
 		g.definir_cor(cor_fundo)
 		g.limpar()
 		g.definir_cor(cor_principal)
@@ -519,8 +527,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 226; 
- * @DOBRAMENTO-CODIGO = [49, 64, 71, 78, 89, 102, 176, 193, 211, 215, 219, 224, 234, 259, 264, 290, 325, 338, 368, 378, 425, 489, 497, 505];
+ * @POSICAO-CURSOR = 42; 
+ * @DOBRAMENTO-CODIGO = [49, 68, 75, 82, 93, 106, 180, 197, 219, 223, 227, 232, 242, 267, 272, 298, 333, 346, 376, 386, 433, 497, 505, 513];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
