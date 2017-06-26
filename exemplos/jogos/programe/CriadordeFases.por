@@ -20,7 +20,7 @@
  * 	
  * Autores:
  * 
- * 	Adson Marques da Silva Esteves(shiandson@gmail.com)
+ * 	Adson Marques da Silva Esteves(shinadson@gmail.com)
  * 	
  * Data: 11/03/2016
  */

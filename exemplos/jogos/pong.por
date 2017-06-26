@@ -1,3 +1,32 @@
+/* CLIQUE NO SINAL DE "+", À ESQUERDA, PARA EXIBIR A DESCRIÇÃO DO EXEMPLO
+ *  
+ * Copyright (C) 2016 - UNIVALI - Universidade do Vale do Itajaí
+ * 
+ * Este arquivo de código fonte é livre para utilização, cópia e/ou modificação
+ * desde que este cabeçalho, contendo os direitos autorais e a descrição do programa, 
+ * seja mantido.
+ * 
+ * Se tiver dificuldade em compreender este exemplo, acesse as vídeoaulas do Portugol 
+ * Studio para auxiliá-lo:
+ * 
+ * https://www.youtube.com/watch?v=K02TnB3IGnQ&list=PLb9yvNDCid3jQAEbNoPHtPR0SWwmRSM-t
+ * 
+ * Descrição:
+ * 
+ * 	Este exemplo é um jogo de programar o caminho de um personagem
+ * 	escrito em Portugol. O exemplo demonstra como utilizar algumas das bibliotecas 
+ * 	existentes no Portugol. Neste exemplo, também é possível ver algumas técnicas 
+ * 	utilizadas na criação de jogos.
+ * 	
+ * Autores:
+ * 
+ * 	Adson Marques da Silva Esteves(shinadson@gmail.com)
+ * 	Alisson Steffens Henrique (ash@edu.univali.br)
+ * 	
+ * Data: 11/03/2016
+ */
+
+
 programa
 {
 	inclua biblioteca Graficos-->g
@@ -527,8 +556,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 42; 
- * @DOBRAMENTO-CODIGO = [49, 68, 75, 82, 93, 106, 180, 197, 219, 223, 227, 232, 242, 267, 272, 298, 333, 346, 376, 386, 433, 497, 505, 513];
+ * @POSICAO-CURSOR = 1218; 
+ * @DOBRAMENTO-CODIGO = [0, 78, 97, 104, 111, 122, 135, 209, 226, 248, 252, 256, 261, 271, 296, 301, 327, 362, 375, 405, 415, 462, 526, 534, 542];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
