@@ -13,10 +13,9 @@
  * 
  * Descrição:
  * 
- * 	Este exemplo é um jogo de programar o caminho de um personagem
- * 	escrito em Portugol. O exemplo demonstra como utilizar algumas das bibliotecas 
- * 	existentes no Portugol. Neste exemplo, também é possível ver algumas técnicas 
- * 	utilizadas na criação de jogos.
+ * 	Este exemplo é um Jogo de pong escrito em Portugol (ainda em desenvolvimento). 
+ * 	O exemplo demonstra	como utilizar algumas das bibliotecas existentes no Portugol. 
+ * 	Neste exemplo, também é possível ver algumas técnicas utilizadas na criação de jogos.
  * 	
  * Autores:
  * 
@@ -556,8 +555,8 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 1218; 
- * @DOBRAMENTO-CODIGO = [0, 78, 97, 104, 111, 122, 135, 209, 226, 248, 252, 256, 261, 271, 296, 301, 327, 362, 375, 405, 415, 462, 526, 534, 542];
+ * @POSICAO-CURSOR = 1209; 
+ * @DOBRAMENTO-CODIGO = [0, 77, 96, 103, 110, 121, 134, 208, 225, 247, 251, 255, 260, 270, 295, 300, 326, 361, 374, 404, 414, 461, 525, 533, 541];
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
