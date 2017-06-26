@@ -37,7 +37,7 @@ programa
 			g.renderizar()
 
 			iteracao = (iteracao + 1) % 360
-			//u.aguarde(15)
+			u.aguarde(15)
 		}
 
 		finalizar()
@@ -116,7 +116,7 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 44; 
+ * @POSICAO-CURSOR = 212; 
  * @PONTOS-DE-PARADA = ;
  * @SIMBOLOS-INSPECIONADOS = ;
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
